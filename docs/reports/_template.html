@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- TITLE: one line naming the comparison/experiment and its date -->
+<title>REPORT TITLE — YYYY-MM-DD</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&family=Merriweather+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #fffdf4; --surface: #fffaf0; --surface-alt: #f8f6ef;
+  --fg: #111827; --fg-subtle: #555555; --fg-muted: #999999;
+  --navy: #1a3875; --sage: #6e8050; --terracotta: #b36e4e; --gold: #d4a853;
+  --border: #e4dac8; --border-strong: #d4c9b5; --border-subtle: #f0ebe1;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg);
+  font: 400 0.85rem/1.6 'Merriweather Sans', sans-serif; }
+.page { max-width: 880px; margin: 0 auto; padding: 40px 28px 72px; }
+h1 { font: 900 1.6rem/1.2 'Merriweather', Georgia, serif; margin: 0 0 6px; }
+h2 { font: 700 1.05rem/1.3 'Merriweather', Georgia, serif; margin: 34px 0 10px; }
+.meta { font-size: 0.68rem; color: var(--fg-muted); text-transform: uppercase;
+  letter-spacing: 0.08em; margin-bottom: 22px; }
+p { margin: 0 0 11px; }
+code { font-family: ui-monospace, Menlo, monospace; font-size: 0.8em;
+  background: var(--surface-alt); padding: 1px 4px; border-radius: 3px; }
+
+/* The verdict block — the report leads with its conclusion. */
+.verdict { border-top: 3px double var(--border-strong);
+  border-bottom: 1px solid var(--border); padding: 16px 2px 14px; margin: 0 0 8px; }
+.verdict .call { font: 700 1.05rem/1.45 'Merriweather', Georgia, serif; margin: 0 0 6px; }
+.verdict .call.improved { color: var(--sage); }
+.verdict .call.regressed { color: var(--terracotta); }
+.verdict .call.noise { color: var(--fg-subtle); }
+.verdict .basis { font-size: 0.78rem; color: var(--fg-subtle); margin: 0; }
+
+table { border-collapse: collapse; width: 100%; font-size: 0.78rem; margin: 10px 0 16px; }
+th { text-align: left; font-size: 0.6rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--fg-subtle);
+  border-bottom: 2px solid var(--border-strong); padding: 5px 9px 6px; }
+td { border-bottom: 1px solid var(--border-subtle); padding: 7px 9px;
+  vertical-align: top; font-feature-settings: "tnum" 1; }
+td.num { font-family: ui-monospace, Menlo, monospace; font-size: 0.9em; text-align: right; }
+tr.sig-up td { background: rgba(110,128,80,0.07); }
+tr.sig-down td { background: rgba(179,110,78,0.07); }
+.delta-up { color: var(--sage); font-weight: 700; }
+.delta-down { color: var(--terracotta); font-weight: 700; }
+.delta-flat { color: var(--fg-muted); }
+
+.caveats { border-left: 3px solid var(--terracotta);
+  background: rgba(179,110,78,0.05); padding: 10px 14px; font-size: 0.78rem; margin: 16px 0; }
+.caveats b { color: var(--terracotta); font-size: 0.62rem; text-transform: uppercase;
+  letter-spacing: 0.08em; display: block; margin-bottom: 4px; }
+.note { font-size: 0.72rem; color: var(--fg-muted); }
+footer { margin-top: 44px; padding-top: 12px; border-top: 1px solid var(--border);
+  font-size: 0.66rem; color: var(--fg-muted); }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADLINE: what was compared/tested, in plain words -->
+  <h1>REPORT TITLE</h1>
+  <div class="meta">
+    <!-- e.g. "crewborg v13 vs v12 · 2×100 episodes · xreq_… / xreq_… · 2026-07-15" -->
+    ARMS · N · BATCH IDS · DATE
+  </div>
+
+  <!-- THE VERDICT COMES FIRST. One of: improved / regressed / noise / mixed.
+       The .call line is the single sentence a reader takes away.
+       The .basis line states the decision rule it was read against. -->
+  <div class="verdict">
+    <p class="call improved">VERDICT SENTENCE — e.g. "v13 improves long-map win rate (+8.2pp, p=0.003) with no significant regressions."</p>
+    <p class="basis">Read against the pre-committed rule: RULE TEXT (from experiments/ID.md). Clean episodes: N/N after taint; small-N caveats below if any.</p>
+  </div>
+
+  <!-- EVIDENCE: one table per decomposition group (role/seat/phase per the
+       game's binding). Every metric row: baseline, candidate, delta,
+       uncertainty, verdict. Mark significant rows with tr.sig-up / tr.sig-down. -->
+  <h2>GROUP NAME (e.g. "As crew")</h2>
+  <table>
+    <tr><th>Metric</th><th>Baseline</th><th>Candidate</th><th>Δ</th><th>p / CI</th><th>n/side</th><th>Read</th></tr>
+    <tr class="sig-up">
+      <td>metric_name</td><td class="num">0.412</td><td class="num">0.494</td>
+      <td class="num delta-up">+8.2pp</td><td class="num">p=0.003</td><td class="num">200</td>
+      <td>improved</td>
+    </tr>
+    <tr>
+      <td>other_metric</td><td class="num">1.31</td><td class="num">1.29</td>
+      <td class="num delta-flat">−0.02</td><td class="num">p=0.71</td><td class="num">200</td>
+      <td>noise</td>
+    </tr>
+  </table>
+
+  <!-- REGRESSION SWEEP: always present, even (especially) when empty. -->
+  <h2>Regression sweep</h2>
+  <p><!-- Either: "No significant adverse moves on any measured metric." Or a
+       table of the adverse moves in the same format as above, sig-down rows. --></p>
+
+  <!-- CAVEATS / TAINT / N: the honesty block. Never omit. -->
+  <div class="caveats">
+    <b>Caveats, taint &amp; power</b>
+    <!-- Taint: how many episodes dropped and why; whether taint hit arms
+         asymmetrically. N: whether any group is under the binding's floor
+         ("directional only"). Anything that weakens the verdict, stated
+         plainly — an honest caveat here is worth more than a clean-looking table. -->
+    TAINT AND POWER NOTES
+  </div>
+
+  <!-- MECHANISM NOTES (optional): does the movement have a behavioral
+       correlate? A score move with no mechanism is suspect — say what the
+       traces/replays show, or say that nobody looked yet. -->
+  <h2>Mechanism</h2>
+  <p>WHAT THE TRACES SHOW — or "not yet inspected; verdict is statistical only."</p>
+
+  <footer>
+    Generated by the optimizer-seed loop · experiment record: experiments/ID.md ·
+    raw artifacts under .runtime/ · numbers are per-group after taint filtering.
+  </footer>
+
+</div>
+</body>
+</html>
