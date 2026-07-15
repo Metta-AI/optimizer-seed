@@ -84,5 +84,5 @@ required set. List them all: an unlisted skill is an undiscoverable one.)*
 |---|---|---|
 | Game docs | `docs/` | Enough that a newcomer understands the game without leaving the repo, including how it's won |
 | Reference policy | `players/{{REF_POLICY}}/` | Buildable; the starting point `seed-a-policy` improves on. Give it a real `VERSION_LOG.md`; keep `players/_VERSION_LOG_template.md` in place for future policies |
-| Build tooling | `tools/` | Pinned game/SDK refs with rationale; consumed by `build-upload` |
+| Build tooling | `tools/build.sh` | The build entry point `build-upload` invokes. Convention: `build.sh [--ref <game-ref>] [--tag <image-tag>]` — builds the policy image for linux/amd64 and prints the image tag; pinned game/SDK refs live inside with their rationale |
 | Eval defaults | `eval_defaults.yaml` | *(optional — machine-readable defaults for `run-eval`; delete this row if not shipped and say so in the eval-design binding)* |
