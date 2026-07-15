@@ -4,7 +4,7 @@
 |---|---|
 | **Seed** | optimizer-seed |
 | **Version** | 0.1.0-dev |
-| **Upstream** | *(repository URL set at first release)* |
+| **Upstream** | https://github.com/Metta-AI/optimizer-seed |
 | **Planted** | *(date stamped when a user clones and onboards)* |
 
 ## The divergence stance

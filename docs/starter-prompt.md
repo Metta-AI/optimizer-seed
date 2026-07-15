@@ -13,7 +13,7 @@ strategy, and get better over time.
 
 Please:
 
-1. Clone the optimizer seed: `git clone <SEED_REPO_URL> my-optimizer`
+1. Clone the optimizer seed: `git clone https://github.com/Metta-AI/optimizer-seed my-optimizer`
    (pick a directory name I'll keep — this becomes *my* optimizer).
 2. `cd my-optimizer` and read `AGENTS.md` — it's your operating doctrine in
    this repo, including how we work together.
@@ -23,8 +23,3 @@ Please:
 4. Then start `docs/getting-started.md` and guide me through it. I may be
    completely new to Softmax and to these games — act as my guide, not just
    a coding agent.
-
----
-
-*(Maintainers: replace `<SEED_REPO_URL>` with the published seed repository
-URL when releasing.)*
