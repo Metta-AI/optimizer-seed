@@ -1,0 +1,9 @@
+# Bulky generated output — downloads, raw artifacts, scratch analysis.
+# Nothing in here is a record; everything durable has a named home (AGENTS.md state map).
+.runtime/
+games/*/.runtime/
+
+# OS noise
+.DS_Store
+__pycache__/
+*.pyc
