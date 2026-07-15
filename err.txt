@@ -1,2 +1,0 @@
-error: games/crewrift already exists. Use --update to diff against upstream,
-or --name <dir> to install under a different lab name.
