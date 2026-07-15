@@ -64,8 +64,15 @@ fi
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 
+# Local paths get a file:// prefix so --depth applies cleanly (git ignores
+# --depth on plain local clones and warns).
+CLONE_URL="$MIXIN_URL"
+case "$MIXIN_URL" in
+  /*) CLONE_URL="file://$MIXIN_URL" ;;
+esac
+
 echo "Cloning $MIXIN_URL ..."
-if ! git clone --depth 1 --quiet "$MIXIN_URL" "$TMP/mixin"; then
+if ! git clone --depth 1 --quiet "$CLONE_URL" "$TMP/mixin"; then
   echo "error: clone failed for $MIXIN_URL" >&2
   exit 1
 fi

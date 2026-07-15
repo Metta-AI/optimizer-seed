@@ -24,8 +24,10 @@ assignments that agents habitually get wrong; known scoring quirks)*
 ## Platform specifics for this game
 
 *(this game's episode pacing, sensible batch sizes, artifact quirks, replay
-format notes — the game-specific companion to docs/platform.md's generic
-reference)*
+format notes. The seed's `docs/platform.md` covers the generic platform —
+auth, API routes, upload/submit semantics, cross-game quirks — so cover only
+what is specific to this game; when in doubt, a little duplication beats a
+gap, since mixins are authored without reading the seed's internals)*
 
 ## Mechanics ground truth
 

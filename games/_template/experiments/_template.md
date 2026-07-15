@@ -45,5 +45,6 @@ Read against the pre-committed decision rule — no post-hoc goalposts.
 - **confirmed / refuted / inconclusive**, and why.
 - What closes: if refuted, add the lever to `closed_levers.md` with the
   numbers. If confirmed, what ships and what the rollback is.
-- Status transitions are validated by `record.py`; refuted records are never
-  deleted.
+- Status transitions are validated by the seed's
+  `skills/experiment/scripts/record.py` once this lab is installed in an
+  optimizer; refuted records are never deleted.

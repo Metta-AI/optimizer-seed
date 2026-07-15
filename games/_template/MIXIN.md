@@ -5,13 +5,23 @@ the load-bearing part — **every skill this mixin provides**, so core skills
 resolve bindings here instead of guessing, gaps are machine-checkable, and
 extra capabilities are discoverable.
 
+**Placeholder conventions** (delete this note when filling in):
+`{{GAME_NAME}}` = the human-readable game name. `{{GAME_SLUG}}` = the
+lowercase directory-safe name; it should match the lab's directory
+(`games/<slug>/`, i.e. what `add_game.sh --name` was given) — core skills
+address the lab by directory, so a mismatched slug in skill frontmatter is
+cosmetic, but keep them aligned anyway. Rows marked *(optional)* may be
+deleted when not shipped; `.gitkeep` files exist only to keep empty
+directories in git — delete them once a directory has real content (keep
+`instruments/.gitkeep`: that directory should exist even when empty).
+
 ## Identity
 
 | | |
 |---|---|
 | **Game** | {{GAME_NAME}} |
-| **Coworld** | {{COWORLD_REF}} |
-| **League(s)** | {{LEAGUE_IDS}} |
+| **Coworld** | {{COWORLD_NAME_AND_VERSION}} — free-form for humans (name + version + where its manifest lives); no core skill parses this |
+| **League(s)** | {{LEAGUE_IDS}} — the `league_…` id(s), from `coworld leagues --json` |
 | **Game source of truth** | {{WHERE_MECHANICS_ARE_VERIFIED}} — never answer mechanics questions from memory |
 
 ## Provenance
@@ -35,9 +45,16 @@ on its generic method, and warns the human that results are weaker.
 
 ### Required bindings
 
+**What counts as "filled":** a binding is filled when its knowledge sections
+are real (metrics, decompositions, taint, floors…) even if tooling doesn't
+exist yet — in that case its Tooling section says so explicitly ("no tooling
+yet — build as a lab instrument") and that is *not* a gap. A **gap** is a
+binding that is missing entirely or still template boilerplate; core skills
+announce gaps and proceed on their generic method with the human warned.
+
 | Binding | Path | What it provides | Use when |
 |---|---|---|---|
-| `ab` | `skills/ab/` | Metrics that matter here, decompositions (roles/seats/phases), taint definition, appropriate statistical tests, N floors — with working tooling | Any comparison between versions or policies (core: `ab-compare`) |
+| `ab` | `skills/ab/` | Metrics that matter here, decompositions (roles/seats/phases), taint definition, appropriate statistical tests, N floors — ideally with working tooling | Any comparison between versions or policies (core: `ab-compare`) |
 | `survey` | `skills/survey/` | What a batch overview shows for this game; which stats and splits make an episode "interesting" | Reading any batch of episodes (core: `survey`) |
 | `replay-inspection` | `skills/replay-inspection/` | How to open/decode/expand this game's replays; what the policy's own artifacts contain; the shared clock for joining them | Extracting truth from episodes (core: `replay-inspection`) |
 | `eval-design` | `skills/eval-design/` | Sensible rosters, episode-count floors by question type, role pinning options, pacing limits for this game | Designing any hosted eval (core: `run-eval`) |
@@ -66,6 +83,6 @@ required set. List them all: an unlisted skill is an undiscoverable one.)*
 | Element | Path | Notes |
 |---|---|---|
 | Game docs | `docs/` | Enough that a newcomer understands the game without leaving the repo, including how it's won |
-| Reference policy | `players/{{REF_POLICY}}/` | Buildable; the starting point `seed-a-policy` improves on |
+| Reference policy | `players/{{REF_POLICY}}/` | Buildable; the starting point `seed-a-policy` improves on. Give it a real `VERSION_LOG.md`; keep `players/_VERSION_LOG_template.md` in place for future policies |
 | Build tooling | `tools/` | Pinned game/SDK refs with rationale; consumed by `build-upload` |
-| Eval defaults | `eval_defaults.yaml` | *(optional — machine-readable defaults for `run-eval`)* |
+| Eval defaults | `eval_defaults.yaml` | *(optional — machine-readable defaults for `run-eval`; delete this row if not shipped and say so in the eval-design binding)* |
