@@ -114,8 +114,10 @@ if [ -f "$MIXIN_MD" ] && grep -q '{{MIXIN_REPO_URL}}' "$MIXIN_MD"; then
   stamped=1
 fi
 if [ "$stamped" -eq 0 ]; then
+  # Capture existence before the >> redirection creates the file.
+  if [ -f "$MIXIN_MD" ]; then had_mixin_md=1; else had_mixin_md=0; fi
   {
-    [ -f "$MIXIN_MD" ] && printf '\n'
+    [ "$had_mixin_md" -eq 1 ] && printf '\n'
     cat << EOF
 ## Provenance
 

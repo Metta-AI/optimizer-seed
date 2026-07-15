@@ -1,0 +1,26 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./tools/rotate_lessons.sh",
+            "timeout": 15000
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./harness/auggie/auggie_stop_nudge.sh",
+            "timeout": 10000
+          }
+        ]
+      }
+    ]
+  }
+}

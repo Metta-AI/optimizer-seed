@@ -45,8 +45,10 @@ MARKER="${TMPDIR:-/tmp}/optimizer_lessons_nudged_$transcript_key"
 [ -f "$MARKER" ] && exit 0
 
 # Tool-use entries only — raw transcript text is too noisy (a session-start
-# context block alone can name every lab).
-TOOL_USE_LINES="$(grep '"type":"tool_use"' "$TRANSCRIPT" 2>/dev/null || true)"
+# context block alone can name every lab). Type names cover Claude Code
+# (tool_use) and Codex (function_call, custom_tool_call, local_shell_call)
+# transcript formats; the Auggie harness records entries as tool_use.
+TOOL_USE_LINES="$(grep -E '"type":"(tool_use|function_call|custom_tool_call|local_shell_call)"' "$TRANSCRIPT" 2>/dev/null || true)"
 [ -n "$TOOL_USE_LINES" ] || exit 0
 
 # Same content test as rotate_lessons.sh: real content after the `---`

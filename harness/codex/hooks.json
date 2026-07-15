@@ -1,0 +1,27 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./tools/rotate_lessons.sh",
+            "timeout": 15,
+            "statusMessage": "Rotating tentative-lesson buffers"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./tools/lessons_stop_nudge.sh",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}
