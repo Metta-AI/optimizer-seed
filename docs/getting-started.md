@@ -57,21 +57,32 @@ we're going to learn how this game is actually won."**
 
 ### 3 · Understand the game and its meta
 
-This beat is the soul of the session — do not rush it.
+This beat is the soul of the session — but "don't rush it" means *don't skip
+the teaching*, NOT *do a full field decode*. Keep it a **light, fast,
+interactive** pass; the deep recon is for later sessions once the user is
+hooked. Time-box the whole beat to roughly ten minutes of your work.
 
 1. Read the lab's game docs yourself (`games/<g>/docs/`), then teach the
    game in miniature: what an episode looks like, what scores, what winning
    means. Minutes, not an essay — enough that the replays will make sense.
-2. Run `meta-recon` (its skill says how): standings, who's winning, what the
-   top policies are doing, what's decayed. Write META.md.
-3. **Walk the user through 2–3 curated replays**, narrating like a sports
+2. Run **onboarding-scoped `meta-recon`** (the skill's "onboarding mode"):
+   the current standings, and a *small sample* — the top policy or two and a
+   couple of recent episodes — enough to show the user the meta, NOT a full
+   field decode. Pull a handful of episodes/replays, not dozens. If the
+   mixin's docs already summarize the meta, lean on that and pull only enough
+   live data to confirm it's current. Write a first-pass META.md; it grows
+   in later sessions.
+3. **Walk the user through 1–2 curated replays**, narrating like a sports
    commentator with the game sense they don't have yet: *here's the dominant
    strategy and watch how it does this… here's the mistake that loses
    games… here — watch this moment — is where the current champion looks
    weak.*
 
-The user ends this beat knowing the game, the meta, and where the field
-looks soft. That knowledge is what makes the next beat theirs.
+The user ends this beat knowing the game, the meta at a glance, and where the
+field looks soft — enough to form a take. It does not need to be exhaustive;
+it needs to be *engaging and fast*. A newcomer who waits fifteen silent
+minutes for a perfect field map has already had a worse first session than
+one who was pulled into a sharp two-replay story in five.
 
 ### 4 · Strategize — the user's take
 

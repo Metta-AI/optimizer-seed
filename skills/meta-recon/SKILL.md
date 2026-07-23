@@ -23,6 +23,28 @@ a short curated set of replays worth the human's attention. The human originates
 the strategic jumps; your job is to make the field visible enough that their
 jumps land.
 
+## Two modes: onboarding vs full
+
+Recon has a depth dial. Pick the mode before you start, or you'll default to
+the expensive one when the situation wanted the cheap one.
+
+- **Onboarding mode (a newcomer's first session).** Fast and light: current
+  standings + a *small sample* — the top policy or two and a handful of recent
+  episodes / one or two replays — enough to show the user the meta and hand
+  them a real take. Lean on the mixin's strategy docs for the shape of the
+  field and pull only enough live data to confirm it's current. Target a few
+  minutes and a first-pass META.md, not an exhaustive map. Pulling dozens of
+  episodes/replays here is the wrong call — it buries a curious newcomer in a
+  silent wait when the goal is to hook them into a two-replay story. The map
+  deepens over later sessions.
+- **Full mode (an ongoing campaign).** Everything below: decode the top
+  policies to mechanism statements, quantify, maintain the full field picture.
+  This is what you run once the user is invested and the marginal rival edge
+  is what stands between them and the next rank.
+
+Narrate whichever mode's pulls if they'll take more than a moment (AGENTS.md
+communication) — a live recon is a long silent operation otherwise.
+
 ## Method
 
 ### 1. Profile the league

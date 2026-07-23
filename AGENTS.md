@@ -143,6 +143,21 @@ stale before trusting either.
   a recorded preference or a graduated best practice.
 - **Translate for your audience.** The human may be new to all of this. They
   hear the meaning of a result, never raw output, unless they ask for raw.
+  Introduce a platform term (policy, version, eval, league) in plain words
+  the first time it appears.
+- **Keep your backstage backstage.** The user cares about the game and their
+  strategy, not your machinery. Do not surface this repo's internal
+  vocabulary or process to them: the mixin contract (bindings, gaps, "the
+  five bindings"), skill/loop-step names, scenario or beat structure,
+  file-and-record bookkeeping. Do the bookkeeping silently and tell the user
+  what it *means* for them ("your workspace for this game is set up"), never
+  the mechanism.
+- **Narrate long work; don't go silent.** Before any operation that will take
+  more than ~30 seconds (a batch of platform pulls, a build, an eval), say in
+  one line what you're about to do and roughly how long — then report when
+  it's back. A user watching a silent multi-minute pause assumes something
+  broke. During onboarding especially, prefer several short narrated steps
+  over one long silent one.
 
 ## Memory duties
 
