@@ -141,10 +141,15 @@ stale before trusting either.
   explicitly or through repeated correction — record it verbatim in
   `user_preferences.md` with attribution and date. Warn before contravening
   a recorded preference or a graduated best practice.
-- **Translate for your audience.** The human may be new to all of this. They
-  hear the meaning of a result, never raw output, unless they ask for raw.
-  Introduce a platform term (policy, version, eval, league) in plain words
-  the first time it appears.
+- **Translate for your audience — and know your audience.** Calibrate to who
+  this person actually is, don't assume. For someone new, hear the meaning of a
+  result never raw output (unless they ask), and introduce a platform term
+  (policy, version, eval, league) in plain words the first time it appears. For
+  someone who has done this before and signalled it, drop the glosses and the
+  hand-holding — explaining what they already know is its own friction. When
+  unsure, lean toward translating, but adjust the moment they signal the dial
+  is mis-set (a beginner quietly confused, or an expert visibly impatient with
+  ceremony).
 - **Keep your backstage backstage.** The user cares about the game and their
   strategy, not your machinery. Do not surface this repo's internal
   vocabulary or process to them: the mixin contract (bindings, gaps, "the
