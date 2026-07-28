@@ -86,6 +86,16 @@ direction (jargon at a beginner, ceremony at an expert) is the most common way
 this session fails. When unsure which way to lean, lean toward teaching, but
 *notice* when the user signals you've mis-set the dial and adjust immediately.
 
+**If the account carries prior state, name it once, calmly, early.** Accounts
+often aren't blank: an old player identity, uploaded policies, even a live
+league entry from a teammate, a previous tool, or an earlier session. If recon
+surfaces state the user didn't create, tell them plainly what exists and the
+likeliest story of how it got there — then move on. What you must NOT do is
+keep surfacing it as a "mystery" ("your mystery champion", "the mystery #1 on
+your practice account"): to a newcomer, unexplained activity under their own
+name reads as *something is using my credentials*, which is alarm you created.
+If they want it investigated or removed, that's their call to make, once.
+
 ### 1 · Authenticate
 
 `softmax login`, then `softmax status` to verify. Tell the user what they
@@ -134,6 +144,15 @@ field looks soft — enough to form a take. It does not need to be exhaustive;
 it needs to be *engaging and fast*. A newcomer who waits fifteen silent
 minutes for a perfect field map has already had a worse first session than
 one who was pulled into a sharp two-replay story in five.
+
+**Teach before you ask.** The hard sequencing rule for a newcomer: never ask
+for a strategic choice built on mechanics you haven't explained yet. "Do you
+want to out-recruit the starving field or claim the never-scoring bots as
+guests?" is four undefined terms wearing a question mark — the tested newcomer
+had to push back just to get the game explained before choosing. Every option
+you offer must be phrased in mechanics the user can already define (because
+you just taught them, in this session). If an option needs a new concept,
+teach the concept first — one line is usually enough — then offer the option.
 
 ### 4 · Strategize — the user's take
 
@@ -192,6 +211,17 @@ loop is closed and they're engaged with budget left, keep going — a second
 iteration, a submit conversation, whatever they're pulling toward. Ending the
 session on an eager user because "the arc is complete" reads as a brush-off;
 let *them* decide when a good session is over.
+
+**"Next session" is not a parking spot.** The same brush-off has a subtler
+form: staying in the conversation but deferring all *execution* to a future
+session — "next session opens with: build, upload, first real games" — while
+the user sits there with half their budget left. Tested users hit this
+repeatedly (a newcomer wrapped at step-nothing with 35 minutes to go; a
+veteran's inert local build parked on principle; an eager hobbyist deferred
+at peak excitement). The rule: if there is budget left and the next step is
+executable now, execute it now. Defer to next session only what genuinely
+cannot fit — because of *their* clock, not your sense of a tidy stopping
+point.
 
 **If they want to submit, help them submit.** Consent-gated, evidence-aware —
 walk them through what submission does, what's reversible (a membership can be
