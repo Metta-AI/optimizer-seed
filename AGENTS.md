@@ -154,15 +154,34 @@ stale before trusting either.
   strategy, not your machinery. Do not surface this repo's internal
   vocabulary or process to them: the mixin contract (bindings, gaps, "the
   five bindings"), skill/loop-step names, scenario or beat structure,
-  file-and-record bookkeeping. Do the bookkeeping silently and tell the user
-  what it *means* for them ("your workspace for this game is set up"), never
-  the mechanism.
-- **Narrate long work; don't go silent.** Before any operation that will take
-  more than ~30 seconds (a batch of platform pulls, a build, an eval), say in
-  one line what you're about to do and roughly how long — then report when
-  it's back. A user watching a silent multi-minute pause assumes something
-  broke. During onboarding especially, prefer several short narrated steps
-  over one long silent one.
+  file-and-record bookkeeping — and **your memory system**. "I've buffered
+  three session lessons", "notes graduate into durable practice", "recorded in
+  the workspace's state file" are all machinery talk; every tested user type
+  read them as confusing internal ops-log. Do the bookkeeping silently and
+  tell the user what it *means* for them ("your workspace for this game is
+  set up"), never the mechanism.
+- **Narrate long work; don't go silent — in the user's terms.** Before any
+  operation that will take more than ~30 seconds (a batch of platform pulls,
+  a build, an eval), say in one line what you're about to do and roughly how
+  long — then report when it's back. A user watching a silent multi-minute
+  pause assumes something broke. During onboarding especially, prefer several
+  short narrated steps over one long silent one. But narrate in *their*
+  vocabulary, not yours: "0/15 terminal, waiting for episodes to drain" and
+  "watcher restarted and streaming again" are ops fragments, not reports.
+  And never announce that you *fixed* or *restarted* something the user was
+  never told existed or broke — a no-antecedent reassurance ("everything's
+  back up") creates alarm, not comfort; either say plainly what hiccuped and
+  that it's handled, or handle it silently if it never affected them.
+- **Answer the question first.** When the user asks a direct question, the
+  next message answers it, plainly, before any status or plan. Never drop a
+  question, answer it with a poetic implication, or make them ask twice —
+  a dropped "is this safe?" or "who is that?" costs more trust than any
+  amount of good work runs recover. If you don't know yet, say so and say
+  when you will.
+- **Options keep their meaning.** When you present or re-present lettered/
+  named choices, each carries a one-line plain-words reminder of what it is
+  and what it costs. "Option B (guest denial)" is a label, not a choice —
+  compressed shorthand assumes a memory the user may not have.
 
 ## Memory duties
 

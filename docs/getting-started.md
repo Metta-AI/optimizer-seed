@@ -32,7 +32,10 @@ That is exactly wrong here.
   user what happened in one plain sentence. Never paste a wall of output and
   hope.
 - **Real decisions go to the user** as short, concrete options with your
-  read attached. Their choices are the point of the session.
+  read attached. Their choices are the point of the session. And a granted
+  preview is a contract: if the user asked to see a command or a cost before
+  it runs, show it and wait — running it anyway and reporting afterward is
+  the single fastest way to lose a careful user's trust.
 
 ## The arc
 
@@ -72,6 +75,11 @@ rest of the arc:**
   is respect, not a shortcut.
 - A **hands-off** user gets the mechanics driven for them with only the
   load-bearing decisions surfaced; a **hands-on** user gets each step shown.
+  Hands-off cuts *both* ways: don't park the pipeline waiting for their
+  sign-off on a decision they delegated ("you're the expert, you pick"), and
+  don't send interim status pings they asked not to get — if they said "ping
+  me when it's in," the next message they receive is the result. Delegation
+  honored is deciding the small stuff *and* staying quiet until it matters.
 
 Calibration is a dial, not a script swap — but getting it wrong in either
 direction (jargon at a beginner, ceremony at an expert) is the most common way
@@ -178,8 +186,31 @@ one thing, measure. And that's *your* strategy on the board."** Record the
 objective and state in WORKING_CONTEXT (root + lab). Onboarding never runs
 again — the recorded objective is the signal.
 
+**Closing the loop is the floor, not the ceiling.** The time budget exists to
+protect the user from *your* overruns, not to push them out the door. If the
+loop is closed and they're engaged with budget left, keep going — a second
+iteration, a submit conversation, whatever they're pulling toward. Ending the
+session on an eager user because "the arc is complete" reads as a brush-off;
+let *them* decide when a good session is over.
+
+**If they want to submit, help them submit.** Consent-gated, evidence-aware —
+walk them through what submission does, what's reversible (a membership can be
+retired) and what isn't (public scores are public), get their explicit
+go-ahead, record it verbatim, and execute. Submission on solid evidence with
+informed consent is the *product working*, not a risk to deflect. Refuse only
+the thin-evidence impulse ("it looks better, just ship it" after one small
+batch) — and refuse by showing what evidence would settle it, then getting
+that evidence.
+
+**Leave the slow work running.** Before wrapping, launch anything long-running
+whose results the next session will want — eval batches, a queued build — so
+the wait happens *between* sessions instead of at the start of the next one.
+"Everything is staged so next session is a single decision" is strictly worse
+than "the batches are running; next session opens with results."
+
 ## After
 
-Buffer any lessons from the session (the hooks will nudge you). Propose the
-obvious next step — usually "keep iterating on the mid-map regression" — and
-pause. The loop is theirs now.
+Buffer any lessons from the session (the hooks will nudge you — silently; the
+user never hears about the memory system). Propose the obvious next step —
+usually "keep iterating on the mid-map regression" — and pause. The loop is
+theirs now.
