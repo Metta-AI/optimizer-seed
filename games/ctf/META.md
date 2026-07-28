@@ -39,11 +39,28 @@ ready-packet pacing, TCP_NODELAY transport fixes, and gameplay changes.
 Versions v48–v69 were uploaded on 2026-07-22–23 but were never submitted;
 their provenance is unknown and no local source exists.
 
+The completed side-balanced A/B measured v70 at 21/24 wins (87.5%) against
+v28, with v70 mean score `+0.750` across both arms versus v28 `-0.750`;
+taint was 0/24. The campaign summary characterizes this as roughly a
+13x-weaker fielded champion relative to mainline, while the raw head-to-head
+win counts are 21 versus 3 (7:1). This is a measured v70-versus-v28 result,
+not a general policy-strength multiplier.
+
+Against rank 1, `alphashot-ghost-red-ca3e95:v1`, v70 went 1/12 across the
+mirrored guardrail arms. This indicates that the leaders are running
+substantially tuned policies rather than stock current main. We did not
+measure v28 against rank 1, so v70's gap closure relative to v28 is unknown.
+
 ## Where the field looks weak
 
 No evidence-backed exploitable field weakness has been established. The
-immediate measurable question is whether a current-mainline rebuild improves
-on v28 without liveness failures.
+immediate open question is what the rank-1 policy does differently from the
+current-main default build. Decode that next from replays and artifacts; no
+mechanism or improvement verdict is claimed yet.
+
+Queued field checks against rank 2 (`ctf-h050:v1`) and rank 3
+(`ctf-focusfire:v56`) may refine this picture, but their results were not
+available when this record was updated.
 
 ## Curated replays
 

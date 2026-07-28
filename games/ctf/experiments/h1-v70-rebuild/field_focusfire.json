@@ -1,0 +1,105 @@
+{
+ "target": {
+  "league_id": "league_3243d905-d32d-4ec6-978b-fa94751d4a37"
+ },
+ "roster": [
+  {
+   "player": {
+    "policy_ref": "f4ff0495-1141-4270-a19f-3a6530e2f83c"
+   },
+   "slot": 0
+  },
+  {
+   "player": {
+    "policy_ref": "cb758007-e030-4602-904a-4fa6fd389e9a"
+   },
+   "slot": 1
+  },
+  {
+   "player": {
+    "policy_ref": "f4ff0495-1141-4270-a19f-3a6530e2f83c"
+   },
+   "slot": 2
+  },
+  {
+   "player": {
+    "policy_ref": "cb758007-e030-4602-904a-4fa6fd389e9a"
+   },
+   "slot": 3
+  },
+  {
+   "player": {
+    "policy_ref": "f4ff0495-1141-4270-a19f-3a6530e2f83c"
+   },
+   "slot": 4
+  },
+  {
+   "player": {
+    "policy_ref": "cb758007-e030-4602-904a-4fa6fd389e9a"
+   },
+   "slot": 5
+  },
+  {
+   "player": {
+    "policy_ref": "f4ff0495-1141-4270-a19f-3a6530e2f83c"
+   },
+   "slot": 6
+  },
+  {
+   "player": {
+    "policy_ref": "cb758007-e030-4602-904a-4fa6fd389e9a"
+   },
+   "slot": 7
+  },
+  {
+   "player": {
+    "policy_ref": "f4ff0495-1141-4270-a19f-3a6530e2f83c"
+   },
+   "slot": 8
+  },
+  {
+   "player": {
+    "policy_ref": "cb758007-e030-4602-904a-4fa6fd389e9a"
+   },
+   "slot": 9
+  },
+  {
+   "player": {
+    "policy_ref": "f4ff0495-1141-4270-a19f-3a6530e2f83c"
+   },
+   "slot": 10
+  },
+  {
+   "player": {
+    "policy_ref": "cb758007-e030-4602-904a-4fa6fd389e9a"
+   },
+   "slot": 11
+  },
+  {
+   "player": {
+    "policy_ref": "f4ff0495-1141-4270-a19f-3a6530e2f83c"
+   },
+   "slot": 12
+  },
+  {
+   "player": {
+    "policy_ref": "cb758007-e030-4602-904a-4fa6fd389e9a"
+   },
+   "slot": 13
+  },
+  {
+   "player": {
+    "policy_ref": "f4ff0495-1141-4270-a19f-3a6530e2f83c"
+   },
+   "slot": 14
+  },
+  {
+   "player": {
+    "policy_ref": "cb758007-e030-4602-904a-4fa6fd389e9a"
+   },
+   "slot": 15
+  }
+ ],
+ "num_episodes": 6,
+ "notes": "field map: v70 odd vs focusfire even (next-check context)"
+}
