@@ -11,12 +11,9 @@ league-submission approval; do not submit.
 
 ## Open threads
 
-- Harvest the queued rank-2 and rank-3 field checks:
-  `xreq_0f69fd93-1527-4a41-a5b5-794e81be5b17` versus `ctf-h050:v1` and
-  `xreq_2fafba53-8e11-4101-a148-19a0ae141de4` versus
-  `ctf-focusfire:v56`.
-- For the next check, start with completed counts and taint filtering, then
-  compare both mirrored sides before proposing another policy change.
+- Decode rank-1/rank-3 mechanism from replays; no queued evals outstanding.
+- The completed field checks were single-sided (v70 odd slots only), so side
+  bias is uncontrolled; do not treat them as mirrored causal estimates.
 - Do not submit v70 without explicit human approval.
 
 ## Watched ids
@@ -27,8 +24,10 @@ league-submission approval; do not submit.
   `xreq_0610dba6-db45-4bfc-836f-30b2b272a6f9` — v70 21/24, taint 0/24.
 - Completed guardrail: `xreq_6c8b16f1-8078-4a63-86ea-b197071128ec` and
   `xreq_db6824f4-61d1-4cb8-bb30-30b0b8a4f738` — v70 1/12.
-- Queued: `xreq_0f69fd93-1527-4a41-a5b5-794e81be5b17` and
-  `xreq_2fafba53-8e11-4101-a148-19a0ae141de4`.
+- Completed rank-2 check: `xreq_0f69fd93-1527-4a41-a5b5-794e81be5b17` —
+  v70 1/6, taint 0, single-sided.
+- Completed rank-3 check: `xreq_2fafba53-8e11-4101-a148-19a0ae141de4` —
+  v70 0/6, taint 0, single-sided.
 
 ## Load-bearing facts
 

@@ -51,16 +51,21 @@ mirrored guardrail arms. This indicates that the leaders are running
 substantially tuned policies rather than stock current main. We did not
 measure v28 against rank 1, so v70's gap closure relative to v28 is unknown.
 
+The completed single-sided checks put the stock default-define mainline build
+at 1/6 against rank 2 `ctf-h050:v1` and 0/6 against rank 3
+`ctf-focusfire:v56`, with taint 0 in both checks. Since v70 was on odd slots
+only and neither check was mirrored, side bias is uncontrolled. Taken
+together with the rank-1 result, the measured field picture is 1/12 versus
+rank 1, 1/6 versus rank 2, and 0/6 versus rank 3. This supports the conclusion
+that the top three are running substantially tuned policies rather than stock
+mainline. It does not identify their mechanisms.
+
 ## Where the field looks weak
 
-No evidence-backed exploitable field weakness has been established. The
-immediate open question is what the rank-1 policy does differently from the
-current-main default build. Decode that next from replays and artifacts; no
+No evidence-backed exploitable field weakness has been established. The next
+real gain should come from decoding the rank-1 and rank-3 mechanisms from
+replays and artifacts rather than another rebuild of stock mainline. No
 mechanism or improvement verdict is claimed yet.
-
-Queued field checks against rank 2 (`ctf-h050:v1`) and rank 3
-(`ctf-focusfire:v56`) may refine this picture, but their results were not
-available when this record was updated.
 
 ## Curated replays
 

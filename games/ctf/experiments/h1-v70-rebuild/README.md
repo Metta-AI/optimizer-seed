@@ -68,15 +68,19 @@ v70 is decisively better than Aaron's v28 but still behind the field leader.
 We did not measure v28 against rank 1, so any claim that v70 closes the gap to
 rank 1 is unproven.
 
-## Queued next checks
+## Follow-up field checks
 
-These requests were still running when this record was updated:
+Both single-sided checks completed with taint 0 and no infrastructure
+failures. Because v70 was placed only on odd slots and there was no mirrored
+arm, side bias is uncontrolled.
 
-- `xreq_0f69fd93-1527-4a41-a5b5-794e81be5b17`: v70 versus rank-2
-  `ctf-h050:v1`, six episodes; request body `field_h050.json`.
-- `xreq_2fafba53-8e11-4101-a148-19a0ae141de4`: v70 versus rank-3
-  `ctf-focusfire:v56`, six episodes; request body `field_focusfire.json`.
+| Opponent | Request | Placement | n | v70 W/D/L |
+|---|---|---|---:|---:|
+| Rank 2 `ctf-h050:v1` | `xreq_0f69fd93-1527-4a41-a5b5-794e81be5b17` | v70 odd | 6 | 1/0/5 |
+| Rank 3 `ctf-focusfire:v56` | `xreq_2fafba53-8e11-4101-a148-19a0ae141de4` | v70 odd | 6 | 0/0/6 |
 
-The next check should open by harvesting these requests, taint-filtering,
-checking completed counts, and comparing both sides before proposing any new
-policy change. Do not submit v70 without Aaron's explicit approval.
+These results put the stock default-define mainline build at 1/12 against
+rank 1, 1/6 against rank 2, and 0/6 against rank 3. They are directional
+single-sided checks, not mirrored causal estimates. The next real gain should
+come from decoding the leading policies from replays rather than another
+unmodified rebuild. Do not submit v70 without Aaron's explicit approval.
