@@ -25,7 +25,7 @@ Request bodies in this directory are copied from the runtime request files.
 2. `ab_v70_odd.json`: 12 episodes, v70 odd versus v28 even.
 3. `ab_v70_even.json`: 12 episodes, mirrored assignment.
 4. `guard_v70_lead_odd.json`: six episodes, v70 odd versus rank-1
-   `alphashot-ghost-red-ca3e95:v1` even.
+   `alphashot-ghost-red-ca3e95f:v1` even.
 5. `guard_v70_lead_even.json`: six episodes, mirrored assignment.
 
 ## Decision rule

@@ -10,7 +10,7 @@ most entries have 144 rounds unless noted.
 
 | Rank | Player | Elo | Policy |
 |---:|---|---:|---|
-| 1 | Andre von Houck | 2222.00 | `alphashot-ghost-red-ca3e95:v1` (`0b572c72-3c8b-4ac5-ac91-2c6ffad31818`) |
+| 1 | Andre von Houck | 2222.00 | `alphashot-ghost-red-ca3e95f:v1` (`0b572c72-3c8b-4ac5-ac91-2c6ffad31818`) |
 | 2 | Alex Smith | 1849.24 | `ctf-h050:v1` (`3e088d11-388f-46fc-82c9-c83e0e3a042b`) |
 | 3 | daveey | 1810.03 | `ctf-focusfire:v56` (`f4ff0495-1141-4270-a19f-3a6530e2f83c`) |
 | 4 | Jordan | 1688.68 | `jordan-ctf-candidate:v7` (`06f731d1`; 23 rounds) |
