@@ -223,6 +223,13 @@ executable now, execute it now. Defer to next session only what genuinely
 cannot fit — because of *their* clock, not your sense of a tidy stopping
 point.
 
+The sentence "next session opens with: X" is itself the tell — if you can
+name X that precisely, X is startable. Start it, or launch it to run through
+the wrap (see "Leave the slow work running" below). The cost of parking is
+not abstract: most tested sessions that parked the eval ended with **no eval
+batch ever created** — the user's first real measurement, the whole point of
+the loop, simply never happened.
+
 **If they want to submit, help them submit.** Consent-gated, evidence-aware —
 walk them through what submission does, what's reversible (a membership can be
 retired) and what isn't (public scores are public), get their explicit
