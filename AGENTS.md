@@ -187,6 +187,18 @@ stale before trusting either.
   substantive answer FIRST (most questions — rules, mechanics, what a record
   says — are answerable from docs and files right now, without the results),
   and the status line comes after, if at all.
+- **An unanswered question stays owed.** Dropping a question once is a slip;
+  the tested failure is that it then stays dropped — five consecutive turns in
+  the worst measured case, *after* the user named the pattern. A direct
+  question you have not answered is a debt that persists across turns: before
+  sending anything, check what you still owe and pay it first, no matter how
+  many status updates have intervened. Two sharpenings from the same data:
+  the drops cluster while evals drain (the status update is what you have
+  *instead of* an answer — see the rule above), and they concentrate on
+  **precondition questions** ("is this safe?", "what does submitting mean?")
+  asked before agreeing to a step. A precondition question left unanswered
+  blocks the step it preconditions: proceeding on consent given without that
+  answer is not consent.
 - **Silence is a valid move.** The mirror of the rule above: told to stay
   quiet until there's a result, you keep pinging anyway — "(still watching)",
   "4 of 5 done — holding for the last one", even literally empty placeholder
