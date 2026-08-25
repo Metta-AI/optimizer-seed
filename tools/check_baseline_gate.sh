@@ -50,6 +50,7 @@ if [ "${1:-}" = "--self-test" ]; then
   fixture declined blocked '*(rank + score + date)*'
   fixture hollow completed '*(rank + score + date)*'   # completed, no real result
   fixture bogus banana '*(x)*'
+  fixture hashrank completed '#7 of 24, score 118.4, 2026-08-25'
   mkdir -p "$tmp/games/nosection" && printf '# Working context\n' \
     > "$tmp/games/nosection/WORKING_CONTEXT.md"
   fails=0
@@ -65,6 +66,7 @@ if [ "${1:-}" = "--self-test" ]; then
     fi
   }
   expect 0 'completed + ladder result' done
+  expect 0 'rank written with a #' hashrank
   expect 1 'state none' unrecorded
   expect 1 'submission still in flight' inflight
   expect 1 'human declined' declined
@@ -74,7 +76,7 @@ if [ "${1:-}" = "--self-test" ]; then
   expect 2 'no such lab' ghost
   expect 2 'ambiguous: several labs, none named'
   if [ "$fails" = 0 ]; then
-    echo 'baseline gate self-test: all 9 cases pass'
+    echo 'baseline gate self-test: all 10 cases pass'
     exit 0
   fi
   echo "baseline gate self-test: $fails case(s) FAILED"
@@ -131,13 +133,14 @@ fi
 field() { # field <name> — the value of "- <name>: ..." with placeholders voided
   printf '%s\n' "$BLOCK" \
     | sed -n "s/^[[:space:]]*-[[:space:]]*$1[[:space:]]*:[[:space:]]*//p" \
-    | sed 's/[[:space:]]*#.*$//' \
     | sed 's/^\*(.*)\*$//' \
     | sed 's/[[:space:]]*$//' \
     | head -n 1
 }
 
-STATE="$(field state)"
+# Only the state line carries a trailing enumeration comment; a ladder result
+# may legitimately contain a '#' (a rank written "#7 of 24").
+STATE="$(field state | sed 's/[[:space:]]*#.*$//; s/[[:space:]]*$//')"
 RESULT="$(field 'ladder result')"
 
 case "$STATE" in
