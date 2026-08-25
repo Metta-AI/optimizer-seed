@@ -16,6 +16,11 @@ means onboarding is done; never re-run it, never re-ask what's recorded here.
 
 *(none installed — `tools/add_game.sh <mixin-repo-url>`)*
 
+**Baseline state is per-lab**, in each `games/<lab>/WORKING_CONTEXT.md` under
+"Baseline submission": until it reads `completed` with a real ladder result, no
+XP may be spent in that lab (AGENTS.md non-negotiable #9). Check with
+`tools/check_baseline_gate.sh <lab>`.
+
 ## Open threads
 
 *(none)*

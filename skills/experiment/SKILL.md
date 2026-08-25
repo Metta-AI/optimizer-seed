@@ -24,6 +24,19 @@ experiment produces a confident wrong answer that every later step inherits.
 
 ## Method
 
+### 0. The baseline gate (blocking)
+
+```bash
+tools/check_baseline_gate.sh <lab>   # exit 0 = spend permitted
+```
+
+Every instrument this skill can reach costs XP, so a non-zero exit ends the
+skill before the record is even opened (non-negotiable #9): no sweep, no
+directional probe, no "cheapest adequate instrument" — the cheapest adequate
+instrument for a lab with no baseline is the baseline submission itself.
+Designing an experiment you are not allowed to run is not a useful pause point;
+report the block and hand off to `submit`.
+
 ### 1. Open the record
 
 Create the experiment record before designing anything:

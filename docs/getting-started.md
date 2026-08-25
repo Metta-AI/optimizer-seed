@@ -39,7 +39,7 @@ That is exactly wrong here.
 
 ## The arc
 
-Seven beats (beat 0 + six), ~60–90 minutes. **The session's success is
+Eight beats (beat 0 + seven), ~60–90 minutes. **The session's success is
 closing the loop once — understand, change one thing, measure, see it on the
 board — inside the user's time budget. It is not a perfect first policy.** If
 you must trade, trade depth for loop-closure: a shipped-and-measured simple
@@ -191,17 +191,49 @@ here: *uploads are free and private; **submitting to the league** is the
 public, irreversible act, and it never happens without your explicit
 go-ahead.*
 
-### 6 · First evaluation
+### 6 · The baseline submission — before any measurement spend
 
-Run a hosted batch sized by the lab's eval-design binding, with the
+**This beat comes before the first eval, and nothing that costs XP may run
+until it completes** (non-negotiable #9). There is no baseline yet, so an eval
+now measures their policy against nothing, and no number it produces can be
+attributed to a ladder position. `tools/check_baseline_gate.sh <lab>` is the
+check; `run-eval`, `ab-compare` and `experiment` all refuse while it fails.
+
+So: propose submitting the version they just uploaded **exactly as it is** — no
+tuning pass, no "let's just check it first". Frame it as what it is: the fastest
+way to get a real result on the board, and the reference every later A/B is
+measured against.
+
+Consent is untouched and stays exactly as taught in beat 5: walk them through
+what submission does, what's reversible (a membership can be retired) and what
+isn't (public scores are public), get their explicit go-ahead, record it
+verbatim, then execute via `submit`. A baseline submission skips `submit`'s
+evidence preconditions — there is nothing to compare against — and skips
+nothing else.
+
+Then wait for the real ladder result and record it in the lab's
+`WORKING_CONTEXT.md` under "Baseline submission" (`state: completed` plus the
+rank/score). Waiting is the beat, not dead time: narrate the qualification
+transitions, show them the replays as rounds land, and read the field with them.
+
+**If they decline, the lab stays blocked.** Record `state: blocked` with their
+reason and say plainly that optimization is on hold until there's a baseline —
+do not fall back to "we'll just run a small diagnostic instead". That fallback
+is the exact failure this beat exists to prevent.
+
+### 7 · First evaluation
+
+Run the baseline gate first (`tools/check_baseline_gate.sh <lab>`; it must exit
+0), then a hosted batch sized by the lab's eval-design binding, with the
 dashboard up — **give them the link unprompted** and narrate what they're
 watching. Stream artifacts; when enough lands, deliver the readout
 finding-first: *your long-map idea is working (+X on exactly the split you
 predicted); mid-map regressed; here are two explanations and what would
 distinguish them.*
 
-Close the loop out loud: **"That's the loop — understand, strategize, change
-one thing, measure. And that's *your* strategy on the board."** Record the
+Close the loop out loud: **"That's the loop — understand, strategize, submit a
+baseline, change one thing, measure against it. And that's *your* strategy on
+the board."** Record the
 objective and state in WORKING_CONTEXT (root + lab). Onboarding never runs
 again — the recorded objective is the signal.
 
@@ -230,14 +262,13 @@ not abstract: most tested sessions that parked the eval ended with **no eval
 batch ever created** — the user's first real measurement, the whole point of
 the loop, simply never happened.
 
-**If they want to submit, help them submit.** Consent-gated, evidence-aware —
-walk them through what submission does, what's reversible (a membership can be
-retired) and what isn't (public scores are public), get their explicit
-go-ahead, record it verbatim, and execute. Submission on solid evidence with
-informed consent is the *product working*, not a risk to deflect. Refuse only
-the thin-evidence impulse ("it looks better, just ship it" after one small
-batch) — and refuse by showing what evidence would settle it, then getting
-that evidence.
+**If they want to submit again — a promotion this time — help them submit.**
+Consent-gated, evidence-aware, same walkthrough as beat 6. Submission on solid
+evidence with informed consent is the *product working*, not a risk to deflect.
+Refuse only the thin-evidence impulse ("it looks better, just ship it" after one
+small batch) — and refuse by showing what evidence would settle it, then getting
+that evidence. (The baseline submission in beat 6 is the one submission that
+needs no comparison evidence, because it *is* the comparison.)
 
 **Leave the slow work running.** Before wrapping, launch anything long-running
 whose results the next session will want — eval batches, a queued build — so

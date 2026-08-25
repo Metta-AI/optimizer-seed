@@ -37,7 +37,7 @@ the board fast is explicitly not the goal here; thinking is.
 
 | Where | What |
 |---|---|
-| `AGENTS.md` | The constitution: the loop, the eight non-negotiables, the one gate, where every fact lives. Your agent reads it every session. |
+| `AGENTS.md` | The constitution: the loop, the nine non-negotiables, the submission gate and the baseline gate (no XP spend before a first submission — `tools/check_baseline_gate.sh`), where every fact lives. Your agent reads it every session. |
 | `skills/` | Thirteen process skills — from `meta-recon` (know the field) through `experiment` (falsifiable tests) to `submit` (the gate). Game-agnostic; each resolves its game specifics from the lab's mixin. |
 | `games/<game>/` | Your labs, one per game, installed from per-game **mixins** (`tools/add_game.sh`). Each lab holds the game's docs, bindings, memory, experiments, players, and your accumulated instruments. `games/_template/` is the mixin contract. |
 | `best_practices.md` · `closed_levers.md` · `user_preferences.md` | Durable memory: graduated practice, refuted levers, your stated preferences (including the speed stance and the autonomy dial). |

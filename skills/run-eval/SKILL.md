@@ -15,6 +15,20 @@ expensive thing is running the *wrong* eval and reading it anyway. This skill
 is the front half of measurement: turning the current question into the right
 request shape, at the right size, launched with harvest already streaming.
 
+## Step zero: the baseline gate (blocking)
+
+```bash
+tools/check_baseline_gate.sh <lab>   # exit 0 = spend permitted
+```
+
+**Run this before composing any body.** A non-zero exit means this policy line
+has no completed league submission yet, and no eval may run — not a smoke, not a
+crash-test, not "just three episodes" (non-negotiable #9). The permitted next
+step is proposing the baseline submission of the current policy as-is
+(`skills/submit`); the script prints it. Report the block to the human rather
+than working around it, and never launch on the assumption that the gate would
+have passed.
+
 ## The question → shape table
 
 | Question | Shape |
@@ -44,6 +58,8 @@ has no floors yet, say so (gap) and treat everything as directional.
 
 ## Method
 
+0. **Pass the baseline gate** — `tools/check_baseline_gate.sh <lab>`, above.
+   Non-zero exit ends the skill.
 1. **Name the question** and pick the shape and rung. Write the expected
    effect down if this eval serves an experiment (its record holds the
    pre-registration).
