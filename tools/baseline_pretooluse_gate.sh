@@ -68,7 +68,7 @@ except (TypeError, ValueError):
     COMMAND="$(printf '%s' "$INPUT" \
       | sed -n 's/.*"command"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' \
       | sed 's/\\"/"/g; s/\\\\/\\/g' \
-    | head -n 1)"
+      | head -n 1)"
   fi
 
   if has_spending_pattern "$COMMAND"; then
