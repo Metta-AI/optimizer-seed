@@ -22,6 +22,19 @@ qualitative side-by-side (you, reading both arms' episodes through the lens of
 what the change was meant to do). Numbers say *whether*; the episodes say
 *why* — a verdict needs both to agree or the disagreement explained.
 
+## Before anything: the baseline gate (blocking)
+
+```bash
+tools/check_baseline_gate.sh <lab>   # exit 0 = spend permitted
+```
+
+An A/B is two eval arms, so it is spend, and it is blocked until this policy
+line has a completed league submission with a real ladder result
+(non-negotiable #9). A non-zero exit ends this skill: report it and propose the
+baseline submission instead. This is also the substantive reason, not just a
+rule — "better" needs a reference, and until the baseline is on the ladder the
+comparison has no anchor to a real result.
+
 ## The one principle that makes it valid: fresh + matched
 
 The field drifts — rivals ship versions constantly. Comparing the candidate's

@@ -25,9 +25,9 @@ strategy or gameplay changes. "Let's do X" means *we* do X with the human in
 the loop. The human can widen your autonomy — that preference is recorded in
 `user_preferences.md`, and until it is, this default stands.
 
-## The eight non-negotiables
+## The nine non-negotiables
 
-Everything else in this repo is yours (and the human's) to change. These eight
+Everything else in this repo is yours (and the human's) to change. These nine
 rules each carry a scar — a measured failure from a prior optimization campaign
 that taught it. Do not delete them; if one seems wrong, raise it with the human.
 
@@ -73,6 +73,18 @@ that taught it. Do not delete them; if one seems wrong, raise it with the human.
    better memory of what not to do. If none of those improved, the loop was
    not finished.
 
+9. **No spend before a baseline.** Until this policy line has a **completed
+   league submission** with a real ladder result, the only permitted next
+   step is proposing that baseline submission — of the policy exactly as it
+   is. No hosted eval, no `coworld xp-request`, no A/B, no experiment, no
+   sweep. The gate is a check, not an ordering: every spending skill runs
+   `tools/check_baseline_gate.sh` first and refuses on a non-zero exit.
+   Consent is untouched — #5 still owns the submission itself, and a human
+   who declines leaves the lab blocked (`blocked: no_baseline`), not
+   diagnosing. *Scar: campaigns that opened with diagnostics burned their
+   whole first-session budget measuring a policy against nothing, and had no
+   ladder number to attribute any of it to.*
+
 ## The loop
 
 Step 0 happens every session; a new game enters at step 1 (understand →
@@ -83,7 +95,7 @@ campaign usually enters at 2.
 |---|------|--------------|----------|
 | 0 | **Orient** | Read `WORKING_CONTEXT.md` (root + active lab). A recorded objective means resume — never re-ask what's recorded. Empty means route to `docs/getting-started.md`. | `WORKING_CONTEXT.md` |
 | 1 | **Understand** | Know the game and the field before touching the policy: the meta, who's winning with what, what decayed. Curate replays worth the human's attention. Refresh `META.md` if stale. | `meta-recon`, `replay-inspection`, `survey` |
-| 2 | **Evaluate** | Run a hosted eval batch targeted to the current question. Streaming harvest by default; dashboard up for anything worth watching. | `run-eval` → `fetch-artifacts` |
+| 2 | **Evaluate** | *Gated on the baseline (#9): no XP until this policy line has a completed submission.* Run a hosted eval batch targeted to the current question. Streaming harvest by default; dashboard up for anything worth watching. | `run-eval` → `fetch-artifacts` |
 | 3 | **Read** | Decompose, taint-filter, compute honest deltas per the game's measurement binding. Finding-first readout. | `survey`, `ab-compare` |
 | 4 | **Direct** | Surface decision-ready forks with the meta context that makes them real choices. The human picks. | propose-and-pause |
 | 5 | **Hypothesize** | Turn the direction into a mechanism — *X happens because Y, causing Z* — pinned to a code location, expected effect pre-registered. Check `closed_levers.md` first. | `diagnose` → `experiment` |
@@ -97,6 +109,11 @@ Steps 1–3 and 6–8 are cheap and fast by design — no gates, streaming, free
 uploads. Rigor concentrates at steps 5 (falsifiable hypotheses) and 10 (the
 irreversible act).
 
+**The one exception to that cheapness: a lab with no baseline.** Steps 2, 3 and
+8 spend XP, so on a policy line whose first submission has not completed they
+are closed (non-negotiable #9) and the loop's only move is step 10 with the
+current policy as-is. A new game therefore enters at 1 → (baseline) 10 → 2.
+
 ## Gates and irreversibles
 
 - **Upload** = register a new policy version. Inert: enters no competition,
@@ -105,6 +122,13 @@ irreversible act).
 - **Submit** = enter a league. Public, likely champion-making, effectively
   irreversible. Explicit human go-ahead required, recorded in the submission's
   decision record. No skill other than `submit` may do this.
+- **The baseline gate** = the mirror image, and the only gate pointing the
+  other way: spending is what's blocked, and the *first* submission is what
+  unblocks it (non-negotiable #9). Check it with
+  `tools/check_baseline_gate.sh [lab]`; its state lives in the lab's
+  `WORKING_CONTEXT.md` under "Baseline submission". A baseline submission is
+  exempt from `submit`'s evidence preconditions — there is nothing to compare
+  against yet — but never from the human's go-ahead.
 - **Destroying data** (records, archives, replays not yet analyzed) is the
   other irreversible. When deletion seems right, ask.
 
@@ -113,6 +137,7 @@ irreversible act).
 | Kind of fact | Lives in | Not in |
 |---|---|---|
 | What we're doing right now | `WORKING_CONTEXT.md` (root = optimizer-wide; per-lab = that game) | chat, memory |
+| Whether a policy line has a completed baseline submission | `WORKING_CONTEXT.md` → "Baseline submission" (per-lab), read by `tools/check_baseline_gate.sh` | your recollection |
 | The current picture of a game's field | `games/<g>/META.md` (dated) | WORKING_CONTEXT |
 | What each uploaded version changed | `games/<g>/players/<p>/VERSION_LOG.md` | commit messages alone |
 | Each hypothesis tested and its verdict | `games/<g>/experiments/<id>.md` | version log, chat |
@@ -293,7 +318,7 @@ Use these words to mean exactly this, everywhere — skills, records, reports:
 | `WORKING_CONTEXT.md` / `TENTATIVE_LESSONS.md` | Live state / session buffer |
 | `SEED.md` | Seed provenance and version |
 | `skills/` | The thirteen core skills (each: SKILL.md + optional scripts/) |
-| `tools/` | Hooks (`rotate_lessons.sh`, `lessons_stop_nudge.sh`) and `add_game.sh` |
+| `tools/` | Hooks (`rotate_lessons.sh`, `lessons_stop_nudge.sh`), `check_baseline_gate.sh` (non-negotiable #9), and `add_game.sh` |
 | `harness/` | Per-runtime wiring for the hooks and skills |
 | `docs/` | getting-started, platform reference, policy development, growth paths, reports |
 | `games/` | Your labs (one per game) + `_template/` (the mixin contract) |

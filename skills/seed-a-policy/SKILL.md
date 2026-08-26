@@ -120,5 +120,10 @@ choice is less grounded.
   robustness patterns.
 - **Hands the built artifact to `build-upload`** (image + version log row)
   and debugging to `local-debug`.
-- **Exits into the standard loop** — the first eval goes through `run-eval`
-  and `survey`; the first improvement through `diagnose` → `experiment`.
+- **Exits into `submit`, not `run-eval`.** A freshly seeded policy line has no
+  baseline, so the next step is the baseline submission of what was just
+  uploaded, as-is (non-negotiable #9; `tools/check_baseline_gate.sh <lab>` is
+  the check, and it blocks every eval until that submission completes). Only
+  after it produces a real ladder result does the standard loop open up — evals
+  through `run-eval` and `survey`, improvements through `diagnose` →
+  `experiment`.

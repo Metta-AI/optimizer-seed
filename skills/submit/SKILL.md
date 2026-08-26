@@ -17,9 +17,28 @@ other than this one may submit, and this one may not submit without the
 human's explicit go-ahead — every time, regardless of any prior pattern of
 approvals.**
 
-## Preconditions
+## Two kinds of submission
 
-Before even proposing a submission, all of:
+**The baseline submission** — the first one for a policy line, of the policy
+exactly as it is. It has no evidence preconditions, because it *is* the evidence
+everything later is measured against, and until it completes nothing may spend
+XP (non-negotiable #9). Skip straight to "Method", and afterwards record the
+result in the lab's `WORKING_CONTEXT.md` under "Baseline submission" —
+`state: completed` plus the real ladder rank/score. That line is what
+`tools/check_baseline_gate.sh` reads to unblock `run-eval`, `ab-compare` and
+`experiment`; leaving it unrecorded leaves the lab blocked. If the human
+declines, record `state: blocked` with their reason and stop — the lab stays
+blocked (`blocked: no_baseline`) rather than falling back to diagnostics.
+
+**A promotion submission** — every later one, which replaces a champion and
+therefore carries the full evidence bar below.
+
+What the two share is the only thing that never bends: the human's explicit
+go-ahead (non-negotiable #5).
+
+## Preconditions (promotion submissions)
+
+Before even proposing a promotion submission, all of:
 
 1. The candidate version is **demonstrably better**: a verdict-rung
    `ab-compare` result against the current baseline, read against a
@@ -39,12 +58,16 @@ the go-ahead names this version and this league.
    ```
    coworld submit <policy>:vN --league <league_id> --no-open-browser
    ```
-3. **Write the decision record** — appended to the policy's VERSION_LOG.md
+3. **For a baseline submission, record the gate state first:** the lab's
+   "Baseline submission" block — `state: submitted` on launch, then
+   `state: completed` with the ladder rank/score once the ladder produces one.
+   Verify with `tools/check_baseline_gate.sh <lab>` (exit 0) before any eval.
+4. **Write the decision record** — appended to the policy's VERSION_LOG.md
    under "Submission decision records": the evidence that justified this
    (experiment record id, the deltas with N and p), the human's go-ahead
    (who, when, words), and the rollback plan (which prior version, how fast).
    Update the version's validation state to `submitted`.
-4. **Monitor qualification:**
+5. **Monitor qualification:**
    ```
    scripts/lifecycle.py monitor --policy <policy>:vN [--league <id>]
    ```
