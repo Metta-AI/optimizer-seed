@@ -27,9 +27,28 @@ if [ "${1:-}" = "--self-test" ]; then
   exec bash "$SELF" --run-self-test
 fi
 
+has_spending_pattern() {
+  value="$1"
+  if [ "${2:-strict}" = "strict" ]; then
+    printf ' %s ' "$value" \
+      | grep -Eq '(^|[[:space:];|&])coworld[[:space:]]+xp-request([[:space:]]|$)' \
+      || printf ' %s ' "$value" \
+        | grep -Eq '(^|[[:space:];|&])([^[:space:];|&]*/)?(ab-compare|eval-sweep|eval_sweep)([[:space:]]|$)' \
+      || printf ' %s ' "$value" \
+        | grep -Eq '(^|[[:space:];|&])([^[:space:];|&]*/)?eval_request\.py([[:space:]]|$)' \
+      || printf ' %s ' "$value" \
+        | grep -Eq '(^|[[:space:];|&])([^[:space:];|&]*/)?record\.py([[:space:]]|$)'
+  else
+    printf '%s' "$value" \
+      | grep -Eq 'coworld[[:space:]]+xp-request|ab-compare|eval-sweep|eval_sweep|eval_request\.py|record\.py'
+  fi
+}
+
 if [ "${1:-}" != "--run-self-test" ]; then
   INPUT="$(cat 2>/dev/null || true)"
-  if command -v python3 >/dev/null 2>&1; then
+  USING_SED_FALLBACK=0
+  if [ -z "${BASELINE_FORCE_SED_FALLBACK:-}" ] \
+    && command -v python3 >/dev/null 2>&1; then
     COMMAND="$(printf '%s' "$INPUT" | python3 -c '
 import json
 import sys
@@ -43,28 +62,23 @@ except (TypeError, ValueError):
     pass
 ' 2>/dev/null)"
   else
+    USING_SED_FALLBACK=1
     # The fallback intentionally stops at the first unescaped quote after the
     # command value, so later payload fields cannot become part of COMMAND.
     COMMAND="$(printf '%s' "$INPUT" \
       | sed -n 's/.*"command"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' \
       | sed 's/\\"/"/g; s/\\\\/\\/g' \
-      | head -n 1)"
+    | head -n 1)"
   fi
 
-  spending=0
-  printf ' %s ' "$COMMAND" \
-    | grep -Eq '(^|[[:space:];|&])coworld[[:space:]]+xp-request([[:space:]]|$)' \
-    && spending=1
-  printf ' %s ' "$COMMAND" \
-    | grep -Eq '(^|[[:space:];|&])([^[:space:];|&]*/)?(ab-compare|eval-sweep|eval_sweep)([[:space:]]|$)' \
-    && spending=1
-  printf ' %s ' "$COMMAND" \
-    | grep -Eq '(^|[[:space:];|&])([^[:space:];|&]*/)?eval_request\.py([[:space:]]|$)' \
-    && spending=1
-  printf ' %s ' "$COMMAND" \
-    | grep -Eq '(^|[[:space:];|&])([^[:space:];|&]*/)?record\.py([[:space:]]|$)' \
-    && spending=1
-  [ "$spending" -eq 1 ] || exit 0
+  if has_spending_pattern "$COMMAND"; then
+    :
+  elif [ "$USING_SED_FALLBACK" -eq 1 ] \
+    && has_spending_pattern "$INPUT" raw; then
+    :
+  else
+    exit 0
+  fi
 
   if [ ! -f "$GATE" ] || [ ! -r "$GATE" ]; then
     deny "$ERROR_REASON"
@@ -165,11 +179,49 @@ if [ "${1:-}" = "--run-self-test" ]; then
       fails=$((fails + 1))
     fi
   }
+  expect_fallback_deny() { # expect_fallback_deny <label> <payload>
+    label="$1"
+    input="$2"
+    output="$(
+      printf '%s\n' "$input" \
+        | BASELINE_FORCE_SED_FALLBACK=1 BASELINE_GATE_REPO="$tmp" \
+          BASELINE_GATE_SCRIPT="$REPO/tools/check_baseline_gate.sh" bash "$SELF"
+    )"
+    status=$?
+    if [ "$status" -eq 0 ] \
+      && printf '%s' "$output" | grep -q '"permissionDecision":"deny"' \
+      && printf '%s' "$output" | grep -q 'no completed baseline submission exists'; then
+      printf 'ok   %-34s denied\n' "$label"
+    else
+      printf 'FAIL %-34s output=%s status=%s\n' "$label" "$output" "$status"
+      fails=$((fails + 1))
+    fi
+  }
+  expect_fallback_allow() { # expect_fallback_allow <label> <payload>
+    label="$1"
+    input="$2"
+    output="$(
+      printf '%s\n' "$input" \
+        | BASELINE_FORCE_SED_FALLBACK=1 BASELINE_GATE_REPO="$tmp" \
+          BASELINE_GATE_SCRIPT="$REPO/tools/check_baseline_gate.sh" bash "$SELF"
+    )"
+    status=$?
+    if [ "$status" -eq 0 ] && [ -z "$output" ]; then
+      printf 'ok   %-34s allowed\n' "$label"
+    else
+      printf 'FAIL %-34s output=%s status=%s\n' "$label" "$output" "$status"
+      fails=$((fails + 1))
+    fi
+  }
 
   fails=0
   expect_allow 'non-spending command' 'printf hello' "$tmp" "$REPO/tools/check_baseline_gate.sh"
   expect_allow_payload 'real payload trailing fields' \
     '{"tool_input":{"command":"printf hello"},"cwd":"/home/me/eval-sweep-notes"}'
+  expect_fallback_deny 'sed escaped quote spending' \
+    '{"tool_input":{"command":"bash -c \"coworld xp-request create body.json\""}}'
+  expect_fallback_allow 'sed plain command' \
+    '{"tool_input":{"command":"printf hello"}}'
   expect_allow 'read skill documentation' 'read skills/ab-compare/SKILL.md' \
     "$tmp" "$REPO/tools/check_baseline_gate.sh"
   expect_allow 'list experiment directory' 'ls experiments/' \
@@ -195,7 +247,7 @@ if [ "${1:-}" = "--run-self-test" ]; then
   expect_unavailable 'gate unavailable' 'coworld xp-request create body.json'
 
   if [ "$fails" = 0 ]; then
-    echo 'baseline PreToolUse gate self-test: all 14 cases pass'
+    echo 'baseline PreToolUse gate self-test: all 16 cases pass'
     exit 0
   fi
   echo "baseline PreToolUse gate self-test: $fails case(s) FAILED"
