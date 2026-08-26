@@ -8,6 +8,23 @@
             "command": "./tools/rotate_lessons.sh",
             "timeout": 15,
             "statusMessage": "Rotating tentative-lesson buffers"
+          },
+          {
+            "type": "command",
+            "command": "./tools/baseline_session_start.sh",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./tools/baseline_pretooluse_gate.sh",
+            "timeout": 10
           }
         ]
       }
