@@ -31,7 +31,7 @@ if [ "${1:-}" != "--run-self-test" ]; then
   INPUT="$(cat 2>/dev/null || true)"
   # These hook payloads contain the command as a JSON string. The greedy match
   # reaches the closing quote before the command field's comma or object brace;
-# the two unescapes cover the quoting needed by shell commands.
+  # the two unescapes cover the quoting needed by shell commands.
   COMMAND="$(printf '%s' "$INPUT" \
     | sed -n 's/.*"command"[[:space:]]*:[[:space:]]*"\(.*\)"[[:space:]]*[,}].*/\1/p' \
     | sed 's/\\"/"/g; s/\\\\/\\/g' \
