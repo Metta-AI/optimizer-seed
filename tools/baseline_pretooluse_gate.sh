@@ -29,29 +29,50 @@ fi
 
 if [ "${1:-}" != "--run-self-test" ]; then
   INPUT="$(cat 2>/dev/null || true)"
-  # These hook payloads contain the command as a JSON string. The greedy match
-  # reaches the closing quote before the command field's comma or object brace;
-  # the two unescapes cover the quoting needed by shell commands.
-  COMMAND="$(printf '%s' "$INPUT" \
-    | sed -n 's/.*"command"[[:space:]]*:[[:space:]]*"\(.*\)"[[:space:]]*[,}].*/\1/p' \
-    | sed 's/\\"/"/g; s/\\\\/\\/g' \
-    | head -n 1)"
+  if command -v python3 >/dev/null 2>&1; then
+    COMMAND="$(printf '%s' "$INPUT" | python3 -c '
+import json
+import sys
 
-  case "$COMMAND" in
-    *"coworld xp-request"*|*"ab-compare"*|*"eval-sweep"*|*"eval_sweep"*|\
-    *"run-eval"*|*"experiment"*|*"eval_request.py"*|\
-    *"skills/run-eval/scripts/eval_request.py"*|\
-    *"skills/experiment/scripts/record.py"*|\
-    *"skills/run-eval/SKILL.md"*|*"skills/experiment/SKILL.md"*|\
-    *"skills/ab-compare/SKILL.md"*)
-      ;;
-    *) exit 0 ;;
-  esac
+try:
+    payload = json.load(sys.stdin)
+    command = payload.get("tool_input", {}).get("command", "")
+    if isinstance(command, str):
+        print(command)
+except (TypeError, ValueError):
+    pass
+' 2>/dev/null)"
+  else
+    # The fallback intentionally stops at the first unescaped quote after the
+    # command value, so later payload fields cannot become part of COMMAND.
+    COMMAND="$(printf '%s' "$INPUT" \
+      | sed -n 's/.*"command"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' \
+      | sed 's/\\"/"/g; s/\\\\/\\/g' \
+      | head -n 1)"
+  fi
+
+  spending=0
+  printf ' %s ' "$COMMAND" \
+    | grep -Eq '(^|[[:space:];|&])coworld[[:space:]]+xp-request([[:space:]]|$)' \
+    && spending=1
+  printf ' %s ' "$COMMAND" \
+    | grep -Eq '(^|[[:space:];|&])([^[:space:];|&]*/)?(ab-compare|eval-sweep|eval_sweep)([[:space:]]|$)' \
+    && spending=1
+  printf ' %s ' "$COMMAND" \
+    | grep -Eq '(^|[[:space:];|&])([^[:space:];|&]*/)?eval_request\.py([[:space:]]|$)' \
+    && spending=1
+  printf ' %s ' "$COMMAND" \
+    | grep -Eq '(^|[[:space:];|&])([^[:space:];|&]*/)?record\.py([[:space:]]|$)' \
+    && spending=1
+  [ "$spending" -eq 1 ] || exit 0
 
   if [ ! -f "$GATE" ] || [ ! -r "$GATE" ]; then
     deny "$ERROR_REASON"
   fi
 
+  # check_baseline_gate.sh contract: 0 means permitted, 1 means no baseline,
+  # and 2 means the state cannot be determined. Treat 2+ as deny here,
+  # deliberately failing closed.
   "$GATE" --quiet >/dev/null 2>&1
   STATUS=$?
   case "$STATUS" in
@@ -71,11 +92,14 @@ if [ "${1:-}" = "--run-self-test" ]; then
     printf '\n## Open threads\n'
   } > "$tmp/games/lab/WORKING_CONTEXT.md"
 
+  payload() {
+    printf '%s\n' "$1" | sed 's/"/\\"/g'
+  }
   expect_deny() { # expect_deny <label> <command>
     label="$1"
     command="$2"
     output="$(
-      printf '{"tool_name":"Bash","tool_input":{"command":"%s"}}\n' "$command" \
+      printf '{"tool_name":"Bash","tool_input":{"command":"%s"}}\n' "$(payload "$command")" \
         | BASELINE_GATE_REPO="$tmp" BASELINE_GATE_SCRIPT="$REPO/tools/check_baseline_gate.sh" \
           bash "$SELF"
     )"
@@ -95,7 +119,7 @@ if [ "${1:-}" = "--run-self-test" ]; then
     gate_repo="$3"
     gate_script="$4"
     output="$(
-      printf '{"tool_name":"Bash","tool_input":{"command":"%s"}}\n' "$command" \
+      printf '{"tool_name":"Bash","tool_input":{"command":"%s"}}\n' "$(payload "$command")" \
         | BASELINE_GATE_REPO="$gate_repo" BASELINE_GATE_SCRIPT="$gate_script" \
           bash "$SELF"
     )"
@@ -111,7 +135,7 @@ if [ "${1:-}" = "--run-self-test" ]; then
     label="$1"
     command="$2"
     output="$(
-      printf '{"tool_name":"Bash","tool_input":{"command":"%s"}}\n' "$command" \
+      printf '{"tool_name":"Bash","tool_input":{"command":"%s"}}\n' "$(payload "$command")" \
         | BASELINE_GATE_REPO="$tmp" BASELINE_GATE_SCRIPT="$tmp/missing-gate" \
           bash "$SELF"
     )"
@@ -125,16 +149,40 @@ if [ "${1:-}" = "--run-self-test" ]; then
       fails=$((fails + 1))
     fi
   }
+  expect_allow_payload() { # expect_allow_payload <label> <payload>
+    label="$1"
+    input="$2"
+    output="$(
+      printf '%s\n' "$input" \
+        | BASELINE_GATE_REPO="$tmp" BASELINE_GATE_SCRIPT="$REPO/tools/check_baseline_gate.sh" \
+          bash "$SELF"
+    )"
+    status=$?
+    if [ "$status" -eq 0 ] && [ -z "$output" ]; then
+      printf 'ok   %-34s allowed\n' "$label"
+    else
+      printf 'FAIL %-34s output=%s status=%s\n' "$label" "$output" "$status"
+      fails=$((fails + 1))
+    fi
+  }
 
   fails=0
   expect_allow 'non-spending command' 'printf hello' "$tmp" "$REPO/tools/check_baseline_gate.sh"
+  expect_allow_payload 'real payload trailing fields' \
+    '{"tool_input":{"command":"printf hello"},"cwd":"/home/me/eval-sweep-notes"}'
+  expect_allow 'read skill documentation' 'read skills/ab-compare/SKILL.md' \
+    "$tmp" "$REPO/tools/check_baseline_gate.sh"
+  expect_allow 'list experiment directory' 'ls experiments/' \
+    "$tmp" "$REPO/tools/check_baseline_gate.sh"
+  expect_allow 'commit message mentioning experiment' 'git commit -m "experiment run notes"' \
+    "$tmp" "$REPO/tools/check_baseline_gate.sh"
   expect_deny 'coworld xp-request' 'coworld xp-request create body.json'
+  expect_deny 'uv coworld xp-request' 'uv run coworld xp-request create body.json'
   expect_deny 'ab-compare command' 'ab-compare baseline candidate'
   expect_deny 'eval-sweep command' 'eval-sweep --policy mybot'
-  expect_deny 'run-eval skill entrypoint' 'invoke run-eval'
-  expect_deny 'experiment skill entrypoint' 'invoke experiment'
-  expect_deny 'ab skill entrypoint' 'read skills/ab-compare/SKILL.md'
+  expect_deny 'eval_sweep command' 'eval_sweep --policy mybot'
   expect_deny 'eval request script' 'python skills/run-eval/scripts/eval_request.py create body.json'
+  expect_deny 'experiment entrypoint' 'uv run skills/experiment/scripts/record.py new games/lab/test'
 
   done_repo="$tmp/done"
   mkdir -p "$done_repo/games/lab"
@@ -147,7 +195,7 @@ if [ "${1:-}" = "--run-self-test" ]; then
   expect_unavailable 'gate unavailable' 'coworld xp-request create body.json'
 
   if [ "$fails" = 0 ]; then
-    echo 'baseline PreToolUse gate self-test: all 10 cases pass'
+    echo 'baseline PreToolUse gate self-test: all 14 cases pass'
     exit 0
   fi
   echo "baseline PreToolUse gate self-test: $fails case(s) FAILED"
