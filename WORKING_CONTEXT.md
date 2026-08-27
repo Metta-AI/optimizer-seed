@@ -10,15 +10,23 @@ means onboarding is done; never re-run it, never re-ask what's recorded here.
 
 ## Current objective
 
-*(none — run onboarding)*
+Build a **reasonably strong, middle-of-pack** player for the **Battle Royale**
+league (`league_b88a269b-0de7-4723-b1c7-06dab50fe61d`) and iterate one
+attributable change at a time. Human wants relatively autonomous operation; not
+chasing #1 off the bat. Lab: `games/battleroyale/`.
 
 ## Active games
 
-*(none installed — `tools/add_game.sh <mixin-repo-url>`)*
+- **battleroyale** (`games/battleroyale/`) — set up 2026-08-27 from the league
+  participate flow (not a mixin). Toolchain ready in this VM: Docker running,
+  `coworld[auth]` CLI in the lab's uv project, baseline image `br-baseline:latest`
+  built, doctrine-wrapper build path validated (`br-hunter:latest`).
 
 ## Open threads
 
-*(none)*
+- **BLOCKED on Softmax auth.** `uv run softmax login` is required before upload /
+  hosted XP. Plan once authed: upload v1 = `br-baseline:latest` (legacy doctrine)
+  as the middle-of-pack anchor, then A/B one doctrine change via hosted XP.
 
 ## Watched ids
 
