@@ -24,9 +24,16 @@ chasing #1 off the bat. Lab: `games/battleroyale/`.
 
 ## Open threads
 
-- **BLOCKED on Softmax auth.** `uv run softmax login` is required before upload /
-  hosted XP. Plan once authed: upload v1 = `br-baseline:latest` (legacy doctrine)
-  as the middle-of-pack anchor, then A/B one doctrine change via hosted XP.
+- Authenticated as `djbhindi@gmail.com`. Loop is live.
+- **v1 (legacy) → v2 (hunter) done.** v2 confirmed better via paired A/B
+  (15/20, p≈0.04) and clean anchor (mean rank 8.40 → 6.90 /12, score 60.1 →
+  103.5). **v2 is now middle-of-pack** — objective met.
+- **Next options (propose-and-pause):** (a) tune within hunter (e.g.
+  `CTF_BOT_FFA_LATE_CLOSE=1`, retreat-HP) toward the top hunters (~150); (b) try
+  another doctrine (`hybrid`/`rush`) as v3; (c) submit v2 to the league (GATED —
+  needs explicit human go-ahead). Nothing submitted yet.
+- Batches: v1 anchor `xreq_905820b7`, A/B `xreq_07ed5db8`, v2 anchor
+  `xreq_fb05a394`. Request bodies + results saved in `games/battleroyale/xp/`.
 
 ## Watched ids
 
