@@ -1,0 +1,9 @@
+# uv virtualenv (recreated with `uv sync`)
+.venv/
+
+# Downloaded coworld package + local episode outputs
+coworld/
+runs/
+
+# Local clone of game source used for builds (see player/build_player.sh)
+.src/

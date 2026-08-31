@@ -298,3 +298,34 @@ Use these words to mean exactly this, everywhere — skills, records, reports:
 | `docs/` | getting-started, platform reference, policy development, growth paths, reports |
 | `games/` | Your labs (one per game) + `_template/` (the mixin contract) |
 | `lessons_archive/` | Rotated lesson buffers (+ `reviewed/`) |
+
+## Cursor Cloud specific instructions
+
+Durable, non-obvious notes for agents running in the Cursor Cloud VM. This repo
+is doctrine + memory + thin tooling, not a service — there is no build, no lint,
+and no automated test suite to run.
+
+- **Runtime.** The only extra dependency is `uv` (installed on VM startup by the
+  environment update script to `/usr/local/cargo/bin`, which is on `PATH`).
+  `python3` and `git` are already present. Run any script with
+  `uv run <path/to/script.py>` — the Python deps (`httpx`, `pyyaml`) are declared
+  inline (PEP 723) and resolved by `uv` on first run; there is nothing to
+  `pip install`.
+- **What runs fully offline** (no account, no network): `record.py`
+  (experiment records — `new`/`validate`/`list`), the bash memory hooks in
+  `tools/` (`rotate_lessons.sh` et al. are touched-only no-ops on empty
+  buffers), and `xp_dashboard.py` (the local web server renders its page and
+  serves `/data` even without credentials — only its background poller needs
+  auth). Quick smoke test: `uv run skills/experiment/scripts/record.py --help`.
+- **What needs the external platform.** `eval_request.py`, `fetch_artifacts.py`,
+  `lifecycle.py`, and the dashboard's live poller talk to Softmax
+  (`https://softmax.com/api/observatory`) and require credentials at
+  `~/.softmax/credentials.yaml` (created by `softmax login`). The `softmax` and
+  `coworld` CLIs are **not** installed here, so the loop's live steps (evals,
+  submit) and installing a real game mixin (`tools/add_game.sh <url>`, needs
+  network) cannot be exercised in the cloud VM without those prerequisites.
+  Offline, these scripts only respond to `--help`.
+- **Scratch space.** Use `.runtime/` (gitignored) for any throwaway lab or
+  output — e.g. copy `games/_template/experiments/_template.md` into
+  `.runtime/<lab>/experiments/` to exercise `record.py` without touching the
+  repo.

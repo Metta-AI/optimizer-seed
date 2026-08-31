@@ -1,0 +1,9 @@
+# One-attributable-change wrapper over the built baseline image.
+# Bakes exactly one baseline env knob (the FFA doctrine) so the uploaded policy
+# runs it without needing --secret-env. Build via player/build_player.sh <doctrine>.
+FROM br-baseline:latest
+
+ARG DOCTRINE=legacy
+ENV CTF_BOT_FFA_DOCTRINE=${DOCTRINE}
+
+CMD ["/bin/baseline"]

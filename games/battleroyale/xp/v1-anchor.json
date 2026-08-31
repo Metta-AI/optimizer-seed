@@ -1,0 +1,74 @@
+{
+ "target": {
+  "league_id": "league_b88a269b-0de7-4723-b1c7-06dab50fe61d",
+  "division_id": null,
+  "coworld_id": null,
+  "variant_id": null,
+  "league_name": null,
+  "division_name": null
+ },
+ "roster": [
+  {
+   "player": {
+    "policy_ref": "djbhindi-battleroyale:v1"
+   }
+  },
+  {
+   "player": {
+    "random": true
+   }
+  },
+  {
+   "player": {
+    "random": true
+   }
+  },
+  {
+   "player": {
+    "random": true
+   }
+  },
+  {
+   "player": {
+    "random": true
+   }
+  },
+  {
+   "player": {
+    "random": true
+   }
+  },
+  {
+   "player": {
+    "random": true
+   }
+  },
+  {
+   "player": {
+    "random": true
+   }
+  },
+  {
+   "player": {
+    "random": true
+   }
+  },
+  {
+   "player": {
+    "random": true
+   }
+  },
+  {
+   "player": {
+    "random": true
+   }
+  },
+  {
+   "player": {
+    "random": true
+   }
+  }
+ ],
+ "num_episodes": 20,
+ "notes": "v1 baseline (legacy) anchor - 12 explicit seats (1 mine + 11 random live), first XP batch"
+}
