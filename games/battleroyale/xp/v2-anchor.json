@@ -1,0 +1,74 @@
+{
+ "target": {
+  "league_id": "league_b88a269b-0de7-4723-b1c7-06dab50fe61d",
+  "division_id": null,
+  "coworld_id": null,
+  "variant_id": null,
+  "league_name": null,
+  "division_name": null
+ },
+ "roster": [
+  {
+   "player": {
+    "policy_ref": "djbhindi-battleroyale:v2"
+   }
+  },
+  {
+   "player": {
+    "random": true
+   }
+  },
+  {
+   "player": {
+    "random": true
+   }
+  },
+  {
+   "player": {
+    "random": true
+   }
+  },
+  {
+   "player": {
+    "random": true
+   }
+  },
+  {
+   "player": {
+    "random": true
+   }
+  },
+  {
+   "player": {
+    "random": true
+   }
+  },
+  {
+   "player": {
+    "random": true
+   }
+  },
+  {
+   "player": {
+    "random": true
+   }
+  },
+  {
+   "player": {
+    "random": true
+   }
+  },
+  {
+   "player": {
+    "random": true
+   }
+  },
+  {
+   "player": {
+    "random": true
+   }
+  }
+ ],
+ "num_episodes": 20,
+ "notes": "v2 hunter clean anchor - 1 mine + 11 random live, same setup as v1 anchor for apples-to-apples placement"
+}
