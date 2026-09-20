@@ -1,0 +1,31 @@
+{
+  "schema": "optimizer.example-decision/1",
+  "id": "illustration/actor-0/decision-12",
+  "synthetic": true,
+  "clock": {
+    "observation_tick": 240,
+    "actor_decision_index": 12,
+    "command_application_tick": null
+  },
+  "perspective": {
+    "observer": "actor-0",
+    "authority": "synthetic observation; not a real episode",
+    "visibility_mask_source": null
+  },
+  "observation_ref": null,
+  "memory_before_ref": null,
+  "memory_after_ref": null,
+  "rules": [
+    {"rule_id": "R_attack", "evaluated": true, "matched": true, "inputs_ref": null, "skill": "S_attack", "goal_refs": ["G_pressure"]},
+    {"rule_id": "R_retreat", "evaluated": true, "matched": true, "inputs_ref": null, "skill": "S_retreat", "goal_refs": ["G_survive"]}
+  ],
+  "commands": [
+    {"index": 0, "rule_id": "R_attack", "channel": "combat", "operation": "request_attack", "arguments": {"target": "visible_target"}, "acceptance": "unknown", "effect_ref": null, "overwritten_by_or_cancels": null},
+    {"index": 1, "rule_id": "R_retreat", "channel": "movement", "operation": "request_move", "arguments": {"destination": "safe_point"}, "acceptance": "unknown", "effect_ref": null, "overwritten_by_or_cancels": null}
+  ],
+  "execution": {"termination_reason": "not observed"},
+  "gaps": ["No runtime, observation tape or acceptance evidence", "Cross-channel cancellation is a hypothesis to test"],
+  "fidelity": "unresolvable",
+  "decision_quality": "untested",
+  "provenance": {"origin": "authored fixture", "source_hash": null, "binding_hash": null, "trace_hash": null}
+}

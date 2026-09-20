@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Seven-layer IR structural floor (not native semantic validation)",
+  "description": "Check only shared top-level shape. Strict data-profile, kind, references, operators and behavior require separate validators. Native schemas must preserve their versioned contract.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "id", "situation", "belief", "goal", "strategy", "skill", "execution", "update"],
+  "properties": {
+    "schema": {"type": "string", "minLength": 1},
+    "id": {"type": "string", "minLength": 1},
+    "situation": {"type": "object"},
+    "belief": {"type": "object"},
+    "goal": {"type": "object"},
+    "strategy": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "when", "skill", "for"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "when": {"type": "string", "minLength": 1},
+          "skill": {"type": "string", "minLength": 1},
+          "for": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}
+        }
+      }
+    },
+    "skill": {"type": "object"},
+    "execution": {"type": "object"},
+    "update": {"type": "object"}
+  }
+}

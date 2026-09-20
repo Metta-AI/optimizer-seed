@@ -32,6 +32,14 @@ same records — autonomy changes who drives, never what gets remembered.
 
 ## Capability upgrades
 
+The optional [semantic-policy specification](specs/0001-semantic-ir-symbolic-loop.md)
+and [workflow](../skills/semantic-policy/SKILL.md) cover IR/source reconciliation,
+evidence-bound opponent models and immutable coaching inputs. The seed includes
+representation fixtures and a game-binding template; the compiler, controller
+and scheduling capabilities are proposed implementation stages. Adopt them when
+representation drift or untestable explanations become a bottleneck, keeping
+the existing autonomy settings and submission gate.
+
 | Capability | You'll want it when… | Steal from |
 |---|---|---|
 | **Event warehouse** — per-tick telemetry in a queryable store | "why" questions outgrow watching replays one at a time; you're re-answering the same behavioral question every session | player_labs `crewrift_lab/.claude/skills/crewrift-event-warehouse` (build it as a lab instrument) |

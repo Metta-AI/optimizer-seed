@@ -1,0 +1,251 @@
+{
+  "schema": "optimizer.semantic-source-review/1",
+  "review_date": "2026-09-20",
+  "note": "Review provenance, not a relocatable policy package or an independent rerun of reported evaluations.",
+  "repositories": [
+    {
+      "name": "optimizer-seed",
+      "repository": "https://github.com/Metta-AI/optimizer-seed",
+      "commit": "7ebea87334331e8410f4c0f2ccf5e2376d81cd1f",
+      "files": [
+        {
+          "path": "AGENTS.md",
+          "sha256": "0e3bac199812f921a1bd6d8c8b0481b8aa5c108b7f2f114e73c0e8591911a325",
+          "size_bytes": 19052,
+          "matches_commit": true,
+          "url": "https://github.com/Metta-AI/optimizer-seed/blob/7ebea87334331e8410f4c0f2ccf5e2376d81cd1f/AGENTS.md"
+        },
+        {
+          "path": "docs/policy-development.md",
+          "sha256": "0c6e8f76fa23ae24ce6aa5d7ea07d9fc661104d7ae6a7886c99698bf9efdde3b",
+          "size_bytes": 5132,
+          "matches_commit": true,
+          "url": "https://github.com/Metta-AI/optimizer-seed/blob/7ebea87334331e8410f4c0f2ccf5e2376d81cd1f/docs/policy-development.md"
+        },
+        {
+          "path": "docs/growth.md",
+          "sha256": "fc6240c1a95831f72ecf2e23baab096b281184195e5e74530076ea664870ad10",
+          "size_bytes": 3723,
+          "matches_commit": true,
+          "url": "https://github.com/Metta-AI/optimizer-seed/blob/7ebea87334331e8410f4c0f2ccf5e2376d81cd1f/docs/growth.md"
+        },
+        {
+          "path": "skills/experiment/SKILL.md",
+          "sha256": "15762f5ea8924f3915bdd2684fa03a95fa2f39575c4d2c7ae8d6783f3cf21dfa",
+          "size_bytes": 7707,
+          "matches_commit": true,
+          "url": "https://github.com/Metta-AI/optimizer-seed/blob/7ebea87334331e8410f4c0f2ccf5e2376d81cd1f/skills/experiment/SKILL.md"
+        },
+        {
+          "path": "games/_template/MIXIN.md",
+          "sha256": "16abfe9451594f02425e56466d3553bb67ac2fb484efa9e2401d8dff675a6c12",
+          "size_bytes": 4859,
+          "matches_commit": true,
+          "url": "https://github.com/Metta-AI/optimizer-seed/blob/7ebea87334331e8410f4c0f2ccf5e2376d81cd1f/games/_template/MIXIN.md"
+        }
+      ]
+    },
+    {
+      "name": "polyworld",
+      "repository": "https://github.com/aaln/polyworld",
+      "commit": "38ea61ceb477b665a05ff29ed3e1a81e9a9aec0a",
+      "files": [
+        {
+          "path": "docs/guides/guide-episode-semantic-ir.md",
+          "sha256": "425b55d6a0d55b3ad4d18ad74bc355cf92bf5905e8d3b008b41447fdbaf2103e",
+          "size_bytes": 16456,
+          "matches_commit": true,
+          "url": "https://github.com/aaln/polyworld/blob/38ea61ceb477b665a05ff29ed3e1a81e9a9aec0a/docs/guides/guide-episode-semantic-ir.md"
+        },
+        {
+          "path": "docs/guides/guide-opponent-model-ir.md",
+          "sha256": "d236f3139259814951b8830cef79362cabaeec5adf80081d4650d1cfc4b160a4",
+          "size_bytes": 14784,
+          "matches_commit": true,
+          "url": "https://github.com/aaln/polyworld/blob/38ea61ceb477b665a05ff29ed3e1a81e9a9aec0a/docs/guides/guide-opponent-model-ir.md"
+        },
+        {
+          "path": "examples/gods_of_the_arena/players/ir/policy_ir.py",
+          "sha256": "cc7840b96a8a4e5d84c1154f888aa98812fbc1c014225ad92c6ef417ad99a95d",
+          "size_bytes": 16326,
+          "matches_commit": true,
+          "url": "https://github.com/aaln/polyworld/blob/38ea61ceb477b665a05ff29ed3e1a81e9a9aec0a/examples/gods_of_the_arena/players/ir/policy_ir.py"
+        },
+        {
+          "path": "examples/gods_of_the_arena/players/ir/binding.py",
+          "sha256": "c6b8ada56f27cc09126a80cd402100e713ed687466bb706c3d982b2f902360e0",
+          "size_bytes": 33678,
+          "matches_commit": true,
+          "url": "https://github.com/aaln/polyworld/blob/38ea61ceb477b665a05ff29ed3e1a81e9a9aec0a/examples/gods_of_the_arena/players/ir/binding.py"
+        },
+        {
+          "path": "examples/gods_of_the_arena/players/ir/opponent_ir.py",
+          "sha256": "1f6be6c580ccaba10372d35e6c50dbc0d8e9d6624476596d9c76a4ee4cb8d83c",
+          "size_bytes": 4176,
+          "matches_commit": true,
+          "url": "https://github.com/aaln/polyworld/blob/38ea61ceb477b665a05ff29ed3e1a81e9a9aec0a/examples/gods_of_the_arena/players/ir/opponent_ir.py"
+        },
+        {
+          "path": "examples/gods_of_the_arena/players/ir/forks/jordan268/README.md",
+          "sha256": "0b6d43cfcc85900d07413f77104fb65f6444d845ee5d887f8cd7278f09590caf",
+          "size_bytes": 6280,
+          "matches_commit": true,
+          "url": "https://github.com/aaln/polyworld/blob/38ea61ceb477b665a05ff29ed3e1a81e9a9aec0a/examples/gods_of_the_arena/players/ir/forks/jordan268/README.md"
+        },
+        {
+          "path": "docs/experiments/gota-repairs-20260920/README.md",
+          "sha256": "de97b4866c7d776ad30daa23b7a228e0d7123956e06a27531832f8317f4f4c17",
+          "size_bytes": 5132,
+          "matches_commit": true,
+          "url": "https://github.com/aaln/polyworld/blob/38ea61ceb477b665a05ff29ed3e1a81e9a9aec0a/docs/experiments/gota-repairs-20260920/README.md"
+        },
+        {
+          "path": "docs/reports/2026-09-20-alex-policy-history.md",
+          "sha256": "211dc12f790983b767905608e303e82ccbbee29c99688c62a66bbea7393be27f",
+          "size_bytes": 6003,
+          "matches_commit": true,
+          "url": "https://github.com/aaln/polyworld/blob/38ea61ceb477b665a05ff29ed3e1a81e9a9aec0a/docs/reports/2026-09-20-alex-policy-history.md"
+        },
+        {
+          "path": "docs/opponents/richard-alex-20260920/analysis.md",
+          "sha256": "906d2ef4c7e7a3c54cb1de64b6e1eb1ec71b4dfd2c57876a0f408a4fb774a7a8",
+          "size_bytes": 7227,
+          "matches_commit": true,
+          "url": "https://github.com/aaln/polyworld/blob/38ea61ceb477b665a05ff29ed3e1a81e9a9aec0a/docs/opponents/richard-alex-20260920/analysis.md"
+        },
+        {
+          "path": "docs/opponents/richard-v135/source-audit-20260920/README.md",
+          "sha256": "7737722c341f73445b330e3720b8e2d334da8c090dc8c28897691f33e74a0de8",
+          "size_bytes": 10694,
+          "matches_commit": true,
+          "url": "https://github.com/aaln/polyworld/blob/38ea61ceb477b665a05ff29ed3e1a81e9a9aec0a/docs/opponents/richard-v135/source-audit-20260920/README.md"
+        },
+        {
+          "path": "examples/gods_of_the_arena/players/ir/forks/richard135-coaching-20260920/README.md",
+          "sha256": "00420ee75282bcc5036d66a068d61f90986a9fad1c9b975f668bf03f0c9dfea4",
+          "size_bytes": 7199,
+          "matches_commit": true,
+          "url": "https://github.com/aaln/polyworld/blob/38ea61ceb477b665a05ff29ed3e1a81e9a9aec0a/examples/gods_of_the_arena/players/ir/forks/richard135-coaching-20260920/README.md"
+        },
+        {
+          "path": "examples/gods_of_the_arena/players/ir/forks/richard135-transition-20260920/README.md",
+          "sha256": "84bb211e88188074017a1b748f413386108cd6ec38478071207ba39ada4a87af",
+          "size_bytes": 2738,
+          "matches_commit": true,
+          "url": "https://github.com/aaln/polyworld/blob/38ea61ceb477b665a05ff29ed3e1a81e9a9aec0a/examples/gods_of_the_arena/players/ir/forks/richard135-transition-20260920/README.md"
+        },
+        {
+          "path": "examples/gods_of_the_arena/players/ir/forks/formation-adaptive-20260920/README.md",
+          "sha256": "872ee182d8257317cd5661b820d097fafe48e0c52db2b267c4fcf54b38799ee8",
+          "size_bytes": 3601,
+          "matches_commit": true,
+          "url": "https://github.com/aaln/polyworld/blob/38ea61ceb477b665a05ff29ed3e1a81e9a9aec0a/examples/gods_of_the_arena/players/ir/forks/formation-adaptive-20260920/README.md"
+        }
+      ]
+    },
+    {
+      "name": "policy-loop-ide",
+      "repository": "https://github.com/Metta-AI/coplay",
+      "commit": "935c221469f67c88727d61dd27044d80a3336e9d",
+      "files": [
+        {
+          "path": "docs/autonomous-coach.md",
+          "sha256": "f77efeba82244d357bc03664d6b6c4c4426d6b8f881a6c430550b69f9251873b",
+          "size_bytes": 31935,
+          "matches_commit": true,
+          "url": "https://github.com/Metta-AI/coplay/blob/935c221469f67c88727d61dd27044d80a3336e9d/docs/autonomous-coach.md"
+        },
+        {
+          "path": "docs/coaching-loop-prototype.md",
+          "sha256": "f809490ce0fbf0c829b702aa9ae79ce1aac8109290939f71f323b912a5d90225",
+          "size_bytes": 7428,
+          "matches_commit": true,
+          "url": "https://github.com/Metta-AI/coplay/blob/935c221469f67c88727d61dd27044d80a3336e9d/docs/coaching-loop-prototype.md"
+        },
+        {
+          "path": "docs/coaching-researcher-guide.md",
+          "sha256": "e64b3feca2ec5cc02d568b9819cbe453982031edeb66e86c8f7282ca919c964c",
+          "size_bytes": 12095,
+          "matches_commit": true,
+          "url": "https://github.com/Metta-AI/coplay/blob/935c221469f67c88727d61dd27044d80a3336e9d/docs/coaching-researcher-guide.md"
+        },
+        {
+          "path": "docs/coaching-harness-benchmarks.md",
+          "sha256": "8886c12fc96c30e941f52f66105ebcefaba126071924c42f6ca32a8fe439ca93",
+          "size_bytes": 11495,
+          "matches_commit": true,
+          "url": "https://github.com/Metta-AI/coplay/blob/935c221469f67c88727d61dd27044d80a3336e9d/docs/coaching-harness-benchmarks.md"
+        },
+        {
+          "path": "docs/context-capture.md",
+          "sha256": "fc1971a688eb1d97bc1bda37f6046c3d0e29b495b41a21b96db894c83f128841",
+          "size_bytes": 4574,
+          "matches_commit": true,
+          "url": "https://github.com/Metta-AI/coplay/blob/935c221469f67c88727d61dd27044d80a3336e9d/docs/context-capture.md"
+        },
+        {
+          "path": "app/store.cjs",
+          "sha256": "33cb1b8e919edeba6afa6f4597b80684eab1578a726ee93943627c1c9c4db641",
+          "size_bytes": 9909,
+          "matches_commit": true,
+          "url": "https://github.com/Metta-AI/coplay/blob/935c221469f67c88727d61dd27044d80a3336e9d/app/store.cjs"
+        },
+        {
+          "path": "app/session-reference.cjs",
+          "sha256": "6bff1a76dbeafd17ef92e442103139e0c81c17074c035b70a99f04e7bdcd0bfc",
+          "size_bytes": 1537,
+          "matches_commit": true,
+          "url": "https://github.com/Metta-AI/coplay/blob/935c221469f67c88727d61dd27044d80a3336e9d/app/session-reference.cjs"
+        },
+        {
+          "path": "app/synthesis-schema.cjs",
+          "sha256": "adb5ce73567ae68ffc7a5da23e9280ad2ef53519d378bf20967b1678f33ff6f1",
+          "size_bytes": 9803,
+          "matches_commit": true,
+          "url": "https://github.com/Metta-AI/coplay/blob/935c221469f67c88727d61dd27044d80a3336e9d/app/synthesis-schema.cjs"
+        },
+        {
+          "path": "experiments/pudge-wars/base-ir/starter/ir_tool.py",
+          "sha256": "5dc41b899db6f61e9563c050da70da6aefe221f35a273e7280e218d31321904d",
+          "size_bytes": 3674,
+          "matches_commit": true,
+          "url": "https://github.com/Metta-AI/coplay/blob/935c221469f67c88727d61dd27044d80a3336e9d/experiments/pudge-wars/base-ir/starter/ir_tool.py"
+        },
+        {
+          "path": "experiments/pudge-wars/base-ir/starter/INTERFACE.md",
+          "sha256": "5aaf5d4f2c0515a9cb8ebf23beddfde60a813cf24d0036b817ad87a397ff1666",
+          "size_bytes": 1775,
+          "matches_commit": true,
+          "url": "https://github.com/Metta-AI/coplay/blob/935c221469f67c88727d61dd27044d80a3336e9d/experiments/pudge-wars/base-ir/starter/INTERFACE.md"
+        },
+        {
+          "path": "experiments/pudge-wars/runner/autoresearch.py",
+          "sha256": "bed954eb75c63de5ab36499b7d9e59bdd28afc808493609306150f494d68cb0c",
+          "size_bytes": 30288,
+          "matches_commit": true,
+          "url": "https://github.com/Metta-AI/coplay/blob/935c221469f67c88727d61dd27044d80a3336e9d/experiments/pudge-wars/runner/autoresearch.py"
+        }
+      ]
+    }
+  ],
+  "local_guides": [
+    {
+      "path": "/Users/aaln/Downloads/guide-episode-semantic-ir.md",
+      "sha256": "187ed0b0a2c891ee7c725b002b21dc4199a5b3d8658c7c1fe110e43fa5242ab4",
+      "size_bytes": 13927,
+      "scope": "Historical user-provided guide; local provenance, not a runtime dependency."
+    },
+    {
+      "path": "/Users/aaln/Downloads/guide-episode-semantic-ir (1).md",
+      "sha256": "425b55d6a0d55b3ad4d18ad74bc355cf92bf5905e8d3b008b41447fdbaf2103e",
+      "size_bytes": 16456,
+      "scope": "Historical user-provided guide; local provenance, not a runtime dependency."
+    },
+    {
+      "path": "/Users/aaln/Downloads/guide-opponent-model-ir.md",
+      "sha256": "35ea55bb63f570c08f88b711fbe885bc85af828ebafa6c974a2e98bacc97e5c3",
+      "size_bytes": 15327,
+      "scope": "Historical user-provided guide; local provenance, not a runtime dependency."
+    }
+  ]
+}

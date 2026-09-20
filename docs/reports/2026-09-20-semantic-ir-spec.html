@@ -1,0 +1,1319 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Semantic IR policy loop — Spec 0001</title><style>
+:root {
+  --bg: #fffdf4; --surface: #fffaf0; --surface-alt: #f8f6ef;
+  --fg: #111827; --fg-subtle: #555555; --fg-muted: #999999;
+  --navy: #1a3875; --sage: #6e8050; --terracotta: #b36e4e; --gold: #d4a853;
+  --border: #e4dac8; --border-strong: #d4c9b5; --border-subtle: #f0ebe1;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg);
+  font: 400 0.85rem/1.6 'Merriweather Sans', sans-serif; }
+.page { max-width: 880px; margin: 0 auto; padding: 40px 28px 72px; }
+h1 { font: 900 1.6rem/1.2 'Merriweather', Georgia, serif; margin: 0 0 6px; }
+h2 { font: 700 1.05rem/1.3 'Merriweather', Georgia, serif; margin: 34px 0 10px; }
+.meta { font-size: 0.68rem; color: var(--fg-muted); text-transform: uppercase;
+  letter-spacing: 0.08em; margin-bottom: 22px; }
+p { margin: 0 0 11px; }
+code { font-family: ui-monospace, Menlo, monospace; font-size: 0.8em;
+  background: var(--surface-alt); padding: 1px 4px; border-radius: 3px; }
+
+/* The verdict block — the report leads with its conclusion. */
+.verdict { border-top: 3px double var(--border-strong);
+  border-bottom: 1px solid var(--border); padding: 16px 2px 14px; margin: 0 0 8px; }
+.verdict .call { font: 700 1.05rem/1.45 'Merriweather', Georgia, serif; margin: 0 0 6px; }
+.verdict .call.improved { color: var(--sage); }
+.verdict .call.regressed { color: var(--terracotta); }
+.verdict .call.noise { color: var(--fg-subtle); }
+.verdict .basis { font-size: 0.78rem; color: var(--fg-subtle); margin: 0; }
+
+table { border-collapse: collapse; width: 100%; font-size: 0.78rem; margin: 10px 0 16px; }
+th { text-align: left; font-size: 0.6rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--fg-subtle);
+  border-bottom: 2px solid var(--border-strong); padding: 5px 9px 6px; }
+td { border-bottom: 1px solid var(--border-subtle); padding: 7px 9px;
+  vertical-align: top; font-feature-settings: "tnum" 1; }
+td.num { font-family: ui-monospace, Menlo, monospace; font-size: 0.9em; text-align: right; }
+tr.sig-up td { background: rgba(110,128,80,0.07); }
+tr.sig-down td { background: rgba(179,110,78,0.07); }
+.delta-up { color: var(--sage); font-weight: 700; }
+.delta-down { color: var(--terracotta); font-weight: 700; }
+.delta-flat { color: var(--fg-muted); }
+
+.caveats { border-left: 3px solid var(--terracotta);
+  background: rgba(179,110,78,0.05); padding: 10px 14px; font-size: 0.78rem; margin: 16px 0; }
+.caveats b { color: var(--terracotta); font-size: 0.62rem; text-transform: uppercase;
+  letter-spacing: 0.08em; display: block; margin-bottom: 4px; }
+.note { font-size: 0.72rem; color: var(--fg-muted); }
+footer { margin-top: 44px; padding-top: 12px; border-top: 1px solid var(--border);
+  font-size: 0.66rem; color: var(--fg-muted); }
+
+body {font:400 16px/1.65 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;}
+.page {max-width:1100px;padding:52px 34px 80px;}
+h1 {font:700 2.5rem/1.15 Georgia,serif;margin:0 0 12px;}
+h2 {font:700 1.45rem/1.3 Georgia,serif;scroll-margin-top:24px;}
+h3 {font-size:1.05rem;margin:28px 0 12px;}
+a {color:var(--navy);text-decoration-thickness:1px;text-underline-offset:3px;overflow-wrap:anywhere;}
+.meta {font-size:.75rem;color:#62635c;}
+.verdict .call {font-size:1.15rem;color:var(--navy);}
+.verdict .basis {font-size:.9rem;}
+nav {display:flex;flex-wrap:wrap;gap:8px;margin:20px 0 30px;}
+nav a {border:1px solid var(--border-strong);padding:7px 12px;border-radius:5px;font-size:.86rem;text-decoration:none;}
+.cards {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:24px 0;}
+.card {padding:18px;background:var(--surface-alt);border-top:3px solid var(--sage);}
+.card strong {display:block;color:var(--navy);margin-bottom:8px;}
+.card p {font-size:.9rem;margin:0;}
+pre {background:var(--surface-alt);padding:16px;border:1px solid var(--border);overflow:auto;max-width:100%;}
+pre code {font-size:.81rem;padding:0;}
+code {overflow-wrap:anywhere;}
+p,li,td {overflow-wrap:anywhere;}
+table {font-size:.88rem;}
+th {font-size:.72rem;}
+.table-wrap {overflow:auto;max-width:100%;margin:12px 0 20px;}
+td,th {min-width:115px;}
+td:first-child {min-width:170px;}
+blockquote {margin:16px 0;padding:10px 16px;border-left:3px solid var(--gold);background:var(--surface);}
+blockquote p {margin:0;}
+section {margin-top:44px;padding-top:22px;border-top:2px solid var(--border-strong);}
+section h1 {font-size:1.9rem;}
+summary {cursor:pointer;font:700 1.4rem/1.35 Georgia,serif;padding:18px 0;color:var(--navy);}
+details {border-top:1px solid var(--border-strong);margin-top:26px;}
+details section {border:0;margin-top:0;padding-top:10px;}
+.caveats {font-size:.9rem;}
+.loop {margin:22px 0;padding:22px;border:1px solid var(--border-strong);background:var(--surface);}
+.loop-row {display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;margin:10px 0;}
+.loop-node {padding:12px 16px;border:1px solid var(--border-strong);border-radius:4px;background:var(--bg);text-align:center;}
+.loop small {display:block;text-align:center;color:var(--fg-subtle);margin-top:10px;}
+footer {font-size:.8rem;}
+@media(max-width:650px){.page{padding:28px 18px 50px;}h1{font-size:2rem}.cards{grid-template-columns:1fr;gap:10px}.card{padding:14px}table{font-size:.8rem}.loop{padding:12px}}
+@media print {details > * {display:block!important}nav{display:none}.page{max-width:none;padding:0}pre{white-space:pre-wrap}a{color:inherit}}
+</style></head><body><main class="page"><h1>Semantic IR ⇄ symbolic policies</h1>
+<div class="meta">optimizer-seed extension · Spec 0001 · In review · 20 September 2026</div>
+<div class="verdict"><p class="call">Make every policy change traceable from meaning to execution to measured evidence.</p>
+<p class="basis">A proposal grounded in our GotA iterations and Co-play implementation, with runnable representation examples. Production adapters and the research controller are staged work.</p></div>
+<div class="cards"><div class="card"><strong>Preserve the representation</strong><p>Literal Python, JSON, seven layers and stable rules. Reject unsupported reverse conversion.</p></div>
+<div class="card"><strong>Separate the evidence</strong><p>Round-trip identity, behavioral fidelity, runtime validity and competitive performance answer different questions.</p></div>
+<div class="card"><strong>Bound opponent claims</strong><p>Observed strategies guide experiments. A responsive proxy needs its own intervention tests and validity envelope.</p></div></div>
+<div class="caveats"><b>Implementation and validation scope</b>Nine Stage 0 fixture tests pass, including unsafe Python, duplicate keys, mismatched pairs, type/size limits and model-kind boundaries. Both example IRs pass the structural JSON Schema. These are not native gameplay, proxy-fidelity or leaderboard tests.</div><nav aria-label="Document sections"><a href="#spec">Full specification</a><a href="#contracts">Data and operation contracts</a><a href="#conformance">Conformance and implementation gates</a><a href="#sources">Source review and measured lessons</a></nav><section id="spec"><h1 id="spec-semantic-ir-symbolic-policies-as-an-optimizer-seed-extension">Semantic IR ↔ symbolic policies as an optimizer-seed extension</h1>
+<blockquote>
+<p><strong>Status:</strong> In Review · <strong>Created:</strong> 2026-09-20 · <strong>Scope:</strong> proposed extension, with checked representation examples</p>
+</blockquote>
+<h2 id="spec-summary">Summary</h2>
+<p>Add an optional semantic-policy binding to optimizer-seed. A policy becomes an immutable package containing a seven-layer semantic IR, its executable, versioned implementation bindings and separate evidence for representation consistency, behavioral fidelity and competitive performance. Humans and an autoresearcher can edit either representation, reconcile the change, test it, and retain or reject the whole pair. The same semantic vocabulary describes observed opponents, while distinct artifact types prevent an inferred model from silently becoming an executable opponent.</p>
+<p>Python remains the readable authoring medium used in our GotA policies; JSON is the interchange and validation medium. Markdown and the coaching IDE are views and contribution surfaces. A game adapter owns compilation, supported reverse recognition, observation semantics and runtime checks. Core owns artifact identity, evidence links, workflow and explicit capability failures. We build on the seed's experiment/memory/submission process rather than introducing a second research database or a universal prose compiler.</p>
+<p><strong>What this branch delivers:</strong> this specification, contracts, an optional workflow/template, source-backed design rationale, positive/negative representation fixtures and a checker. It does not implement a generic game compiler, an unattended scheduler, a production IDE integration or new league policies. Commands marked <em>proposed</em> are interface requirements, not installed tools.</p>
+<h2 id="spec-problem">Problem</h2>
+<p>Our iterations exposed several different failures that one “IR verified” flag hides:</p>
+<ul>
+<li>A JSON/Python/BASIC pair can round-trip exactly while its claimed meaning remains untested. The Pudge registered whole-program converter explicitly makes this distinction.</li>
+<li>A rule can pass an activation fixture and never affect a real match: both support restorations reproduced every baseline command in their six-case screen.</li>
+<li>Multiple rules act in one tick. Observation helpers may also choose defense; spells, purchases, target changes and movement coexist. A single “winning rule” or final target cannot explain the whole decision.</li>
+<li>Good matchup results can regress elsewhere. The Jordan counter's nearby recall preserved pressure against Jordan but removed useful remote defense against Alex. Later adaptive variants restored Alex/Jordan wins while still failing Richard red. Results belong to exact artifacts, opponents, colors and configurations.</li>
+<li>A motif model may predict visible categories without recovering a controller. Richard's later source audit exposed ordered overrides, a four-decision neural clock and one-decision recovery; its defining tower-retaliation branch never activated in the original twenty-game corpus.</li>
+<li>A recording can reference the wrong policy. Co-play now preserves corrected associations and superseded analyses, but a selected reference still does not prove which executable ran.</li>
+<li>Copying a few compiler modules missed transitive bindings or pinned engine data. Mac-only paths and snapshots whose dependencies live in a sibling checkout do not make a reproducible package.</li>
+</ul>
+<p>These are measured engineering lessons, not proof that the proposed workflow improves policy quality. The <a href="#sources">source review</a> ties each design decision to inspected code and dated experiments.</p>
+<h2 id="spec-goals">Goals</h2>
+<ul>
+<li>[ ] Preserve our existing seven-layer Python/JSON representation and immutable historical artifacts through explicit adapter/import profiles.</li>
+<li>[ ] Define independently checkable forward conversion, bounded reverse recognition, behavioral meaning and performance claims.</li>
+<li>[ ] Represent ordered multi-rule decisions, observable information, persistent memory, action acceptance and side effects faithfully.</li>
+<li>[ ] Support source-derived and observation-derived opponent IR without claiming hidden intent, source recovery or rollout fidelity from prediction accuracy alone.</li>
+<li>[ ] Make coaching attributable: original contribution → interpretation → semantic/code patch → frozen checks → measured result, including declined and failed work.</li>
+<li>[ ] Make a package verifiable from a clean checkout on another host, with dependency closure and evidence scope visible.</li>
+<li>[ ] Reuse the seed's records, version log, refutations, autonomy preferences and submission gate.</li>
+</ul>
+<h2 id="spec-non-goals">Non-goals</h2>
+<p>Arbitrary natural-language-to-code correctness, decompiling every program into authored intent, universal game mechanics, guaranteed league leadership, a replacement IDE, a mandatory hosted service, or changing the seed's default strategic autonomy. Opaque learned components are possible with declared boundaries; calling them semantic does not explain their internals.</p>
+<h2 id="spec-decisions">Decisions</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Decision</th>
+<th>Reason</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Keep seven semantic layers; use adapter-specific schema IDs</td>
+<td>Preserves existing Python/JSON work without pretending GotA and Pudge already implement the same compiler</td>
+</tr>
+<tr>
+<td>Freeze one authoritative package revision</td>
+<td>Avoids independent IR, code, IDE and evaluator histories disagreeing about the incumbent</td>
+</tr>
+<tr>
+<td>Use a checked compiler and a <strong>partial</strong> reverse recognizer</td>
+<td>Unknown control flow must fail visibly; comments and claimed rule IDs do not prove program meaning</td>
+</tr>
+<tr>
+<td>Track checks separately</td>
+<td>Representation, trace fidelity, intent fidelity, runtime validity, gameplay outcomes and authority answer different questions</td>
+</tr>
+<tr>
+<td>Model ordered effects, not one rule per tick</td>
+<td>Host command order and cross-channel cancellation can change behavior</td>
+</tr>
+<tr>
+<td>Treat opponent inference as scientific modeling</td>
+<td>A useful forecast is not automatically a causal mechanism or responsive policy</td>
+</tr>
+<tr>
+<td>Freeze the tests/verifier outside candidate writes</td>
+<td>A coder must not be able to make a failing policy pass by rewriting its checker</td>
+</tr>
+<tr>
+<td>Keep the IDE an evidence/patch client</td>
+<td>Its selected reference, human interpretation and saved draft are inputs, not acceptance decisions</td>
+</tr>
+<tr>
+<td>Make the binding optional</td>
+<td>Games without IR support keep the existing seed workflow; unavailable claims are reported precisely</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="spec-architecture-and-integration">Architecture and integration</h2>
+<div class="loop" role="img" aria-label="Visible episode evidence and coaching create a version-bound proposal. Semantic IR and symbolic code reconcile through a pinned binding. Independent checks retain or reject a complete package; submission authority is separate.">
+<div class="loop-row"><span class="loop-node">Observed episodes &amp; opponent models</span><span>+</span><span class="loop-node">Human or automatic coach</span></div>
+<div class="loop-row">↓ Version-bound proposal</div>
+<div class="loop-row"><strong class="loop-node">Python / JSON semantic IR</strong><span>⇄</span><strong class="loop-node">Symbolic executable</strong></div>
+<small>Pinned compiler → &nbsp; ← Supported whole-program recognition</small>
+<div class="loop-row">↓ Independent checks</div>
+<div class="loop-row"><span class="loop-node">Retain or reject the complete package</span><span>→</span><span class="loop-node">Existing experiment records</span></div>
+<small>League submission uses the existing separate authority process.</small></div>
+<p>A game opts in through an additional <code>semantic-policy</code> entry in <code>MIXIN.md</code>, implemented under <code>games/&lt;g&gt;/skills/semantic-policy/</code>. The original five bindings stay required; the new one is optional. A proposed <code>semantic-capabilities.json</code> records operations, implementation/version hashes, native schema IDs and supported claim levels. Core never branches on game names or assumes Docker versus raw-source policy artifacts.</p>
+<p>Suggested durable placement:</p>
+<pre><code class="language-text">games/&lt;g&gt;/
+  skills/semantic-policy/          # declared adapter and capability contract
+  instruments/semantic_ir/         # game compiler/extractor/probes/scenario checks
+  players/&lt;p&gt;/revisions/&lt;id&gt;/      # immutable policy + IR + manifest + receipts
+  players/&lt;p&gt;/incumbent.json       # small atomic pointer, not copied policy text
+  players/&lt;p&gt;/VERSION_LOG.md       # existing mandatory upload record
+  opponents/&lt;version&gt;/&lt;study&gt;/    # inferred models / source audits / proxy packages
+  episodes/&lt;episode&gt;/&lt;perspective&gt;/ # semantic account and compact provenance
+  experiments/&lt;id&gt;.md             # existing authoritative hypothesis/verdict record
+  experiments/&lt;id&gt;/               # small plans, patches, checks and result manifests
+.runtime/&lt;game&gt;/                  # replay/media/large traces and working runs
+</code></pre>
+<p><code>META.md</code> remains the dated field picture; <code>WORKING_CONTEXT.md</code> points to active work; <code>closed_levers.md</code> preserves scoped failures. Evidence manifests reference these records rather than creating a competing hypothesis ledger. Large/private evidence stays out of Git with content hashes and retrieval identifiers. Paths are package-relative or explicit artifact-store references; <code>/Users/...</code> is historical provenance only.</p>
+<h2 id="spec-1-representation-and-authority">1. Representation and authority</h2>
+<p>To bootstrap a lab reliably:</p>
+<ol>
+<li>Run the checked-in examples (<code>python3 tools/check_semantic_ir_examples.py</code>), then declare the lab's optional <code>semantic-policy</code> binding. The fixture command does not install a native adapter.</li>
+<li>Choose a frozen existing policy/version and preserve its Python, JSON, source and original hashes. Implement read-only native validation, manifest verification and capability discovery before authoring changes.</li>
+<li>Reproduce its recognized pair and complete dependencies in a clean checkout. Advertise unsupported operations explicitly. Do not admit new source until the corresponding reverse recognizer and independent meaning tests exist.</li>
+<li>Import one fully audited episode and one coaching contribution with verified references/clocks. Produce linked findings and a frozen hypothesis in the seed's existing experiment record.</li>
+<li>Run one attributable semantic change through fidelity, runtime and hosted checks, retaining or rejecting the complete pair. Add scheduling only after recovery/budget tests and recorded authorization for that scope.</li>
+</ol>
+<p>A native IR retains the established top-level form:</p>
+<pre><code class="language-python">POLICY = {
+    &quot;schema&quot;: &quot;&lt;adapter-owned-policy-schema&gt;&quot;,
+    &quot;id&quot;: &quot;&lt;stable-policy-id&gt;&quot;,
+    &quot;situation&quot;: {...}, &quot;belief&quot;: {...}, &quot;goal&quot;: {...},
+    &quot;skill&quot;: {...}, &quot;strategy&quot;: [...],
+    &quot;execution&quot;: {...}, &quot;update&quot;: {...},
+}
+</code></pre>
+<p>Opponent models use <code>MODEL</code> and a distinct native schema. They retain <code>id / when / skill / for</code> preferences and evidence-backed claims where supported by that profile. A common envelope describes artifact kind and compatibility; it does not rewrite old native JSON or teach an old compiler to accept a new shape. The sample schemas validate the common structural minimum. Only the named adapter can validate native meaning or compile it.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Contract</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>situation</code></td>
+<td>Observable predicates, units, affordances, source fields, missingness and computation time; derived groundings distinguish facts from author notes</td>
+</tr>
+<tr>
+<td><code>belief</code></td>
+<td>Runtime estimates/memory <strong>and separately</strong> researcher claims; evidence, status, alternatives, scope, expiry and revision triggers</td>
+</tr>
+<tr>
+<td><code>goal</code></td>
+<td>Authored objective priorities or explicitly inferred/unknown purposes; descriptive goals do not silently affect compilation</td>
+</tr>
+<tr>
+<td><code>skill</code></td>
+<td>Operator/version, parameters, initiation, output/effect channels, memory dependencies, termination and interruption</td>
+</tr>
+<tr>
+<td><code>strategy</code></td>
+<td>Stable rules/preferences linking conditions, skills and goals; execution/priority semantics must be declared rather than inferred from presentation order</td>
+</tr>
+<tr>
+<td><code>execution</code></td>
+<td>Bound language/runtime, observation/action API, ordered effects, clocks, reset rules, limits and dependency identities</td>
+</tr>
+<tr>
+<td><code>update</code></td>
+<td>Parent revision, change origin, semantic diff, evidence additions and claims requiring review</td>
+</tr>
+</tbody>
+</table></div>
+<p>A frozen revision using the literal-data profile contains <code>policy.py</code>, <code>policy.ir.json</code>, generated executable, binding/compiler lock, semantic/source mapping, manifest and receipts. Here <code>policy.py</code> is a convenient authoring view, not privileged executable Python: import via an AST/literal reader, not <code>exec</code>, <code>runpy</code> or arbitrary module import. Permit one assignment plus comments/docstring; reject imports, calls, comprehensions, attributes, unpacking and duplicate keys. New core examples use JSON values only. A trusted legacy adapter may translate a richer trusted authoring module in an isolated build, then export literal data; the exception must never apply to observed opponent files.</p>
+<p>Artifact <strong>roles</strong>, not filenames, determine dispatch. Pudge currently registers
+native <code>ir.md</code> text against executable <code>policy.py</code>; GotA's primary <code>policy.py</code> is
+literal IR data. Preserve Pudge's native text/source under their explicit roles
+and original hashes. A shared JSON/Python view is a separately validated adapter
+projection when supported, never an automatic prose-to-JSON migration. A legacy
+package can be imported read-only with that projection unavailable.</p>
+<p>On import, compare the two data values. On edits, the author explicitly selects Python, JSON, or a proposed symbolic patch as the input; there is no “newest mtime wins.” Generate other views into a new candidate directory. Concurrent edits carry an expected parent revision; mismatches become explicit three-way reconciliation. Markdown is a generated/annotated view with block IDs, not a second unchecked source of executable truth.</p>
+<p><a href="#contracts">Contracts</a> specify value normalization, hashes, artifact kinds, manifests, receipts and example shapes. Old source and JSON hashes stay exactly as recorded. New serialization profiles have their own IDs and test vectors; migration is a new revision, never silent recanonicalization of historical evidence.</p>
+<h2 id="spec-2-ir-symbolic-ir-reliability">2. IR → symbolic → IR reliability</h2>
+<p>Let <code>C_B(I)</code> be deterministic compilation under pinned binding closure <code>B</code>; <code>E_B(S, P)</code> be partial reverse recognition of source <code>S</code> with optional parent semantic context <code>P</code>; <code>N_B(S)</code> be the adapter's conservative executable normalization; and <code>X_B(I)</code> be its declared behavior-affecting projection.</p>
+<p>Required laws, scoped to the supported language:</p>
+<ol>
+<li><strong>Determinism:</strong> identical IR, binding closure and target yield identical generated source bytes. If the binary toolchain is not bit reproducible, record that separately and pin the actual tested binary.</li>
+<li><strong>Forward/reverse consistency:</strong> <code>X_B(E_B(C_B(I), I)) == X_B(I)</code> and <code>N_B(C_B(E_B(C_B(I), I))) == N_B(C_B(I))</code>.</li>
+<li><strong>Supported symbolic edit:</strong> when extraction succeeds, <code>N_B(C_B(E_B(S, P))) == N_B(S)</code> over the <strong>whole</strong> executable. Unknown, unconsumed or ambiguous statements are errors, with source spans and a suggested binding-extension path.</li>
+<li><strong>Semantic honesty:</strong> goals, rationale and belief claims carried from a parent remain attributed to it; reverse recognition does not recover intention from bytes. New rules may have unknown goals. Changed dependencies invalidate affected claims, conservatively all claims when dependency tracking is unavailable.</li>
+<li><strong>No false identity from labels:</strong> deleting/spoofing region comments, appending an executable statement, or adding an ambiguous registry entry must not make an unsupported program pass.</li>
+</ol>
+<p>An AST round trip verifies a declared structural equivalence relation, not universal behavioral equivalence. Exact source bytes identify what was uploaded. Changing formatting may preserve normalized structure but still produces a new source artifact and requires a recorded equivalence result before reusing evidence. An IR-only evidence annotation may retain tested source bytes; its old performance receipt still references the old revision, with an explicit identity link to the new one.</p>
+<p>The binding registry is immutable/versioned and contains all executable dependencies: generator, recognizer, parser/normalizer, templates, imported modules, constants/weights, engine data and target flags. Each operator declares observation/memory reads, writes, effect channels, parameter bounds, reset semantics and runtime cost expectations. Validate dataflow: a rule must not read a fact before its required computation or silently reuse stale facts. If an “observer” also chooses defense or resets a commitment, record its strategic effects; do not certify it as pure perception.</p>
+<p>For an unrecognized semantic/code change, keep it as a candidate. Implement a new named operator/binding version, add independent positive/negative/boundary/history tests, verify unaffected behavior, then re-run full admission. Never broaden the recognizer simply to accept an arbitrary patch. A learned/opaque kernel can be retained as an explicit hashed dependency with typed input/output and tested limits; its implementation is not thereby explained, and unaccounted executable regions are still forbidden.</p>
+<h2 id="spec-3-three-separate-obligations-plus-validity">3. Three separate obligations, plus validity</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Obligation</th>
+<th>Evidence that can support it</th>
+<th>What it cannot establish</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Representation consistency</td>
+<td>Whole-program recognition, deterministic generation, literal Python/JSON equality and dependency hashes</td>
+<td>That natural-language descriptions mean the right thing</td>
+</tr>
+<tr>
+<td>Behavioral/intent fidelity</td>
+<td>Independent scenario/history checks, accepted effects, rule traces and matched instrumented/uninstrumented runs</td>
+<td>Competitive improvement or universal equivalence</td>
+</tr>
+<tr>
+<td>Performance</td>
+<td>Frozen comparison of exact source/version against appropriate current controls, decomposed by the game's meaningful groups</td>
+<td>Causal contribution of every component or permanent league dominance</td>
+</tr>
+<tr>
+<td>Runtime/evidence validity</td>
+<td>Limits, complete artifacts, roster/build/config identity, all actors' execution status, complete replay checks</td>
+<td>Good strategy</td>
+</tr>
+</tbody>
+</table></div>
+<p>Every receipt has status <code>not_run</code>, <code>passed</code>, <code>failed</code>, <code>unavailable</code> or <code>stale</code>, plus inputs, method/version, coverage and limits. <code>unavailable</code> never passes a gate. Keep “claimed,” “fixture-verified,” “episode-supported,” “hosted-confirmed,” and “approved for submission” separate in reports. A single scalar confidence/status is not sufficient.</p>
+<p>Test meanings with activation, non-trigger, boundary, history-sensitive and interruption cases, on both baseline and candidate. A useful test should be able to fail when the promised behavior is absent or reversed. Examples include correct target retention through a commitment, release on an observed clear condition, rejected casts, missing targets, death/reset and dense late-game runtime. A full-game activation count of zero is a finding even if synthetic tests pass.</p>
+<p>The evaluator, mandatory regression suite, test-selection policy and hidden evaluation material are controller-owned. The candidate may propose additional tests but cannot remove frozen tests, rewrite the checker or read holdout outcomes before selection. Verifier bugs create an append-only superseding assessment of the same candidate and frozen plan; preserve the original result and account for selection bias. A verifier repair does not permit changing policy bytes or thresholds under the old experiment ID.</p>
+<h2 id="spec-4-multi-rule-execution-and-episode-ir">4. Multi-rule execution and episode IR</h2>
+<p>An adapter defines a decision as an ordered transition through observation, memory and host effects. Do not universally assume one winner, first-match execution, commutative channels or one decision per world tick. Declare guard sampling (single snapshot versus sequential reads), actor turn order, command application timing, implicit host behavior, memory initialization and respawn semantics.</p>
+<p>For every selected decision, retain all evaluated/matched rules, guard inputs, pre/post memory, ordered requested commands, acceptance/rejection/unknown status, and effect/override relationships. Disjoint channels may compose; later writes may overwrite the same state; movement may cancel attack intent across apparent channels. Command acceptance is not successful execution, and a target field may represent retained intent rather than a new attack.</p>
+<p>The <a href="#contracts-episode-and-decision-records">episode contract</a> joins episode, actor/seat, policy revision, observation tick, actor-decision index and application tick. A semantic account groups meaningful changes and execution spans with stable IDs; short commands/residual events remain in the underlying stream. It uses the actual policy's vocabulary and tags missing concepts <code>[unglossed]</code>. Narrative, mechanical fidelity checks and decision-quality judgments occupy separate fields.</p>
+<p>Only the policy's available information enters its situation/belief narrative. Truth can score beliefs retrospectively in a separately labeled view. Missing rule evaluations yield <code>unresolvable</code>, not inferred fidelity. Reconstructed traces must match all relevant original commands and all state hashes, report completeness, and label their internal states as reconstructed unless actual original execution establishes them. Trace instrumentation must itself be tested for behavior and budget effects.</p>
+<p>A counterfactual branch requires a reproducible predecision engine state, RNG state and actor memories, and the other agents' policies <strong>reacting</strong> thereafter. Compare only currently feasible alternatives and state the outcome metric/horizon. Recorded future enemy commands are a frozen-world diagnostic after an intervention, not a decision-quality verdict. If restart/branch state or reactive opponents are unavailable, record the suspected mistake and the missing discriminator; full-game A/B can still test the broader repair but does not prove that specific decision was dominated.</p>
+<p>Route findings by the evidence established, with competing diagnoses when causal
+localization is unresolved:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Finding</th>
+<th>Proposed repair target</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Proven divergence between recognized IR semantics and execution</td>
+<td>Binding/embedding; fix the implementation or the incorrect contract explicitly</td>
+</tr>
+<tr>
+<td>Recurring visible distinction has no predicate</td>
+<td>Situation vocabulary/grounding, with linked <code>[unglossed]</code> decisions</td>
+</tr>
+<tr>
+<td>A stated belief is predictively wrong on eligible evidence</td>
+<td>Belief estimator/calibration and scope</td>
+</tr>
+<tr>
+<td>A feasible alternative dominates under qualified responsive tests</td>
+<td>Strategy preference, conditional on the tested beliefs, goal and horizon</td>
+</tr>
+<tr>
+<td>Termination or interruption violates the declared skill contract</td>
+<td>Skill interface or its execution binding</td>
+</tr>
+<tr>
+<td>Traces show an unnamed objective</td>
+<td>Goal interpretation for human review; do not invent author intent</td>
+</tr>
+</tbody>
+</table></div>
+<p>A loss, poor execution outcome or top-ranked alternative alone cannot prove a
+specific faulty layer. Each diagnosis is a proposed block-level evidence update;
+preserve the observations separately and let the research experiment test the repair.</p>
+<h2 id="spec-5-observe-another-policy-and-build-ir">5. Observe another policy and build IR</h2>
+<p>Use this evidence ladder without skipping capability checks:</p>
+<ol>
+<li><strong>Bind a study.</strong> Exact opponent version and game/build/config; our observer policy and slot; sampling window and eligibility; intended output granularity; data authority; available observations. Freeze features, population/persistence baselines, chronological or grouped split, opportunity requirements and rejection criteria before holdout exposure.</li>
+<li><strong>Extract permitted evidence.</strong> One named observer's predecision visible history; lagged features; visibility/death gaps, censoring and affordance uncertainty. Do not merge teammate vision unless the runtime shares it. Our visibility does not imply the opponent's visibility. Keep targets, object kinds, action acceptance, clocks and inventory events distinct.</li>
+<li><strong>Form explicit alternatives.</strong> Conditional preferences, possible goals, memory hypotheses and competing explanations. Shared paths do not prove communication; missing behavior does not refute an unexercised branch. Same observation/different history and paired interventions test memory and precedence.</li>
+<li><strong>Fit and score.</strong> Separate target category, exact target, arguments, onset timing, duration, interruption and concurrent commands. Report opportunity counts, coverage, novelty and heldout improvement over declared baselines. A choice predictor scored at retrospectively known segment starts is not an online boundary detector.</li>
+<li><strong>Preserve uncertainty.</strong> Version-scoped evidence statuses, unknown contexts, calibration where justified and abstention. Report exact command/observation-stream duplicates; different seeds do not prove independent trials. Group intervals by justified independent units, not by thousands of ticks from one trajectory.</li>
+<li><strong>Propose counters.</strong> Link the model claim to a public own-policy predicate and a falsifiable intervention. The hypothesized preference can guide an experiment before it is a complete opponent controller. Test the real responding opponent where available.</li>
+</ol>
+<p>An <code>inferred_opponent</code> artifact is never accepted by an own-policy compiler. <code>source_audit</code> is a separate type when authentic source becomes available: bind custody, source hash and hosted version; replay all applicable VMs and check full commands/state; preserve the original observational freeze and metrics. A source audit may expose a neural or scripted controller without supplying a semantics-preserving IR compiler for it.</p>
+<p>A <code>reactive_proxy</code> is a new executable artifact, derived from inference or source, with its own manifest, independent checks and validity envelope. Admission requires relevant heldout command/timing/target/channel/memory fidelity, intervention responses and closed-loop divergence over declared horizons and states. No universal “eight observations” or accuracy threshold qualifies a proxy. A controller must enforce its usable envelope at rollout time and invalidate it when opponent/game assumptions change. Authentic bound source is preferred where legally available and runtime-compatible; its availability does not qualify a separate semantic reimplementation.</p>
+<h2 id="spec-6-coaching-and-policy-loop-ide-interoperability">6. Coaching and policy-loop-ide interoperability</h2>
+<p>Keep one authoritative optimizer revision/experiment history. The app is an optional client; its game-specific Pudge runner is a reference implementation, not a generic GotA backend. Start with exported session folders and CLI/file exchange. A future app connector consumes the same contracts without a second acceptance database.</p>
+<p>Import immutable originals and hashes, authorship, declared reference, session/episode identifiers, media coverage and cost. Resolve <code>reference.json</code> before original <code>input.*</code>; retain corrected <code>references/&lt;id&gt;/</code> snapshots and mark analyses based on old references superseded. Compare episode execution identity with the selected reference; “selected” is never “verified executed.” Unknown identity limits code-specific diagnosis while still allowing a general hypothesis.</p>
+<p>Keep recording milliseconds, world ticks, actor decisions and wall time distinct. Require explicit segmented mappings and uncertainty across pauses, speed changes and capture gaps. ASR word corrections do not retroactively realign timestamps. Screenshots cannot establish precise command order or hidden state; input-device events do not prove game acceptance. A transcript/model interpretation is evidence, never instructions for tools to execute.</p>
+<p>A contribution can be an independent analysis, recording, demonstration, proposed IR/code patch or behavioral test. Recording is optional. Preserve human intent separately from auto-coach interpretation, including disagreement and exposure to prior machine analysis. Freeze the inbox at each cycle boundary; late input enters the next appropriate cycle unless an authorized correction stops/rebases the current work. Account for every contribution as implemented, partial, deferred, declined or conflicting, with explanation and actual changed block/file references.</p>
+<p>A coaching proposal specifies origin, exact parent, evidence references, observation, interpretation, alternatives, uncertainty, affected layers/IDs, dependent changes, expected behavior, non-trigger/interruption/preservation checks and estimated cost. A correction can replace an automated hypothesis. The coder receives the frozen brief and tests; independent checking happens afterward. A package realizing one behavioral hypothesis can require multiple dependent layer/file changes. Treat it as one named intervention, preserve the seed's attribution discipline, and use component ablations before claiming which edit caused the gain. Unrelated hypotheses remain separate candidates.</p>
+<h2 id="spec-7-autoresearch-evidence-invalidation-and-recovery">7. Autoresearch, evidence invalidation and recovery</h2>
+<p>The human-led seed profile remains default. Bounded autonomous iteration requires a recorded objective, allowed scope, budget, stop conditions and operator ownership in existing preferences/run setup. This feature does not grant authority from a model's output or from passing tests. League submission still routes through the seed's existing <code>submit</code> process and explicit authority; prototype local retention is not public deployment.</p>
+<p>Proposed state machine:</p>
+<pre><code class="language-text">proposed → inputs_frozen → built → representation_checked
+         → fidelity_checked → local_debugged → evaluation_frozen
+         → evaluated → retained | rejected | inconclusive | invalid
+</code></pre>
+<p>All scientific outcomes are terminal for that immutable attempt; a changed candidate or repaired evaluation becomes a linked new attempt. <code>invalid</code> preserves failure evidence and blocks retention. Invalid episodes are quarantined from gameplay means but remain in cost/validity denominators; systematic candidate crashes cannot be filtered away to declare a gain. A decision rule sets both performance and admissibility requirements.</p>
+<p>Reserve costs/XP before side effects with stable request idempotency keys. Persist requests and receipts before advancing. Resume already purchased work after interruption; uncertainty about a paid request is reconciled before retry. One durable writer owns candidate selection and incumbent updates. Filesystem locking works only on shared storage; separate hosts need a transactional lease and ledger. Publish package directories atomically and compare-and-swap the incumbent's expected parent. A crash between pair writes or during upload must leave the last complete incumbent usable.</p>
+<p>Invalidation follows dependencies:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Change</th>
+<th>Mandatory consequence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Executable, executable IR projection, target flags or binding implementation</td>
+<td>New artifact; prior source-specific fidelity/runtime/performance does not silently transfer</td>
+</tr>
+<tr>
+<td>Semantic meaning/goal text, same executable</td>
+<td>New semantic revision; re-review affected intent claims even if structural and source identities remain linked</td>
+</tr>
+<tr>
+<td>Pure evidence annotation, same semantics/executable</td>
+<td>New evidence revision with explicit inherited source identity; no new wins are inferred</td>
+</tr>
+<tr>
+<td>Engine/observation/action API or roster/opponent identity</td>
+<td>Re-check compatibility and evidence scope; retain old tests as historical</td>
+</tr>
+<tr>
+<td>Corrected coaching reference</td>
+<td>Preserve originals, supersede mismatched analysis, rebase proposed edits and tests</td>
+</tr>
+<tr>
+<td>Verifier/method bug fix</td>
+<td>New assessment linked to old one; immutable source/plan, explicit supersession and renewed checks</td>
+</tr>
+</tbody>
+</table></div>
+<p>For each finished cycle, save the proposal, representations, complete dependency manifest, checks, decomposed outcomes, trajectory diversity, budget, contribution account, decision and next action. Close the existing experiment record and add scoped refutations to memory. A cycle that retains the incumbent, fixes an instrument or reduces uncertainty is useful; no manufactured policy change is required.</p>
+<h2 id="spec-8-adoption-and-implementation-sequence">8. Adoption and implementation sequence</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Stage</th>
+<th>Deliverable</th>
+<th>Exit criterion</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0 — this branch</td>
+<td>Spec, examples, optional skill/template, source review and fixture checker</td>
+<td>Examples parse identically; negative fixtures reject unsafe/mismatched data; no runtime claims</td>
+</tr>
+<tr>
+<td>1 — package boundary</td>
+<td>Safe literal import, native-schema dispatch, manifests, capability discovery and atomic revisions</td>
+<td>Clean checkout verifies imported GotA and Pudge package identities; old hashes remain unchanged</td>
+</tr>
+<tr>
+<td>2 — one working game adapter</td>
+<td>Compile/extract, dependency closure, effect/memory contracts and independent fidelity checks</td>
+<td>Whole-program roundtrip + adversarial recognition tests + measured no-op instrumentation + relocated build</td>
+</tr>
+<tr>
+<td>3 — episode and coach bridge</td>
+<td>Complete decision records, episode IR, immutable Co-play import and proposal accounting</td>
+<td>Corrected/wrong references, clock gaps, multi-rule ticks and stale edits covered by tests</td>
+</tr>
+<tr>
+<td>4 — opponent studies</td>
+<td>Frozen observer studies, predictive scoring, source-audit import and separate proxy admission</td>
+<td>No hidden-state leak; duplicates/coverage reported; out-of-envelope proxy use blocked</td>
+</tr>
+<tr>
+<td>5 — bounded controller</td>
+<td>Existing experiment/eval integration, budgets, recovery, retention and human authority</td>
+<td>Survives interrupted upload/evaluation and conflicting writers; preserves failures and incumbent</td>
+</tr>
+<tr>
+<td>6 — workflow evaluation</td>
+<td>Matched direct-code versus IR research; assisted versus autonomous comparisons</td>
+<td>Separate operational correctness, semantic fidelity and heldout policy gains, with all-in costs and independent runs</td>
+</tr>
+</tbody>
+</table></div>
+<p>First adapters should wrap existing GotA bounded contracts and Pudge registered-program conversion. Start read-only: recognize/import and reproduce a frozen reference before editing. The old GotA <code>bundle()</code> copied a fixed dependency list; later compiler archives fixed this. Use an explicit complete dependency closure and relocate to a clean host as an acceptance test. Keep game-specific limits, success criteria and runtimes in the binding, not copied from GotA into core.</p>
+<p>A shadow run should compare old and new tooling outputs on the same preserved artifacts before the new controller can retain a candidate. Pilot at least one refutation, one unavailable reverse extraction, one corrected session reference and one successful semantic change. Then use fresh heldout hosted controls for a competitive claim. Do not install a schedule or buy evaluations merely by adopting this spec.</p>
+<h2 id="spec-9-acceptance-and-measurement">9. Acceptance and measurement</h2>
+<p>The <a href="#conformance">conformance matrix</a> names failures that must be caught, including injected Python, ignored source tails, registry ambiguity, changed test assets, multi-command cancellation, missing traces, hidden opponent inputs, duplicate trajectories and interrupted publication. Passing the current example checker is only Stage 0.</p>
+<p>Measure conversion coverage, unsupported-edit rate, stale-claim detection, evidence completeness, intended-behavior pass rate, false retention, runtime invalidity, clean-host reproducibility, heldout per-group gains and total research cost. Report policy quality separately from conversion convenience. To test the IR workflow itself, freeze starting policy/model/tools/budget, isolate arm memory and holdout access, compare direct-code and IR arms, count all model/media/retries, and repeat independent research runs. A single successful policy or a human-assisted pilot does not establish the workflow advantage.</p>
+<h2 id="spec-alternatives-considered">Alternatives considered</h2>
+<ul>
+<li><strong>Free prose as the compiler contract:</strong> flexible but unverifiable. Use prose for explanation/proposals with explicit implementation bindings and tests.</li>
+<li><strong>Whole-program registration only:</strong> good bootstrap and preserves exact existing Pudge behavior; poor incremental semantics and can degenerate into renaming code. Keep its limitations visible and add block contracts when a measured need appears.</li>
+<li><strong>Treat all source as automatically recoverable IR:</strong> invents intention or ignores unsupported behavior. Prefer bounded extraction with unknowns and explicit rejection.</li>
+<li><strong>Use an inferred opponent as a simulator immediately:</strong> confuses observational correlation with intervention fidelity. Require a distinct executable/proxy qualification.</li>
+<li><strong>Move the controller into the IDE:</strong> duplicates policy/evidence authority and ties research to one UI. Keep file/CLI contracts and one optimizer state.</li>
+<li><strong>Replace the seed constitution with the GotA campaign's autonomy:</strong> makes a specific user's authorization a global default. Use an explicit scoped profile and retain the submit gate.</li>
+</ul>
+<h2 id="spec-open-questions-for-implementation-review">Open questions for implementation review</h2>
+<ol>
+<li>Which first game adapter will be maintained upstream, and which remain mixin-owned? The proposal recommends mixin ownership and a tiny core conformance suite.</li>
+<li>Which engine snapshots expose complete state and per-agent memory for faithful mid-episode branching? Advertise unsupported branching until proven.</li>
+<li>What private durable artifact store/lease is available for multi-host runs? The first implementation can use a single filesystem owner without requiring a service.</li>
+<li>Should the common literal-data profile add normalized decimal quantities now or leave numeric conventions entirely native? Stage 0 uses bounded JSON-safe integers and decimal strings; preserve legacy native hash profiles.</li>
+<li>What opportunity/divergence thresholds qualify each opponent proxy and each intended counterfactual? These must be declared per use case before testing, not selected to rescue a proxy.</li>
+</ol>
+<p>These questions do not block reviewing the representation and evidence contracts. They are scoped choices for implementation; no unspecified capability is assumed to exist.</p></section><details id="appendix-contracts"><summary>Data and operation contracts</summary><section id="contracts"><h1 id="contracts-semantic-policy-extension-data-and-operation-contracts">Semantic-policy extension: data and operation contracts</h1>
+<p>Normative proposal for <a href="#spec">Spec 0001</a>.
+The checked-in examples exercise representation and evidence typing only.
+“Required” below describes the production adapter/controller to implement.</p>
+<h2 id="contracts-artifact-kinds-and-native-profiles">Artifact kinds and native profiles</h2>
+<p>Every package declares one kind:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Kind</th>
+<th>Meaning</th>
+<th>Execution permission</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>own_policy</code></td>
+<td>Authored/reconciled policy intended for our runtime</td>
+<td>Only after native validation, compilation and runtime admission</td>
+</tr>
+<tr>
+<td><code>inferred_opponent</code></td>
+<td>Observational hypotheses and forecasts</td>
+<td>No own-policy compilation or reactive rollout</td>
+</tr>
+<tr>
+<td><code>source_audit</code></td>
+<td>Mechanisms recovered from authenticated source with explicit limits</td>
+<td>Audit is descriptive; bound original source has its own execution identity</td>
+</tr>
+<tr>
+<td><code>reactive_proxy</code></td>
+<td>Executable model with a separately tested validity envelope</td>
+<td>Only within that declared envelope, after admission</td>
+</tr>
+</tbody>
+</table></div>
+<p><code>schema</code>, <code>id</code> and the seven layers remain native IR fields. Package metadata
+names <code>kind</code>, <code>native_schema</code>, adapter/version and game identity. Adapter dispatch
+checks both kind and schema before loading code. Never “convert” an inferred model
+by changing its schema string. The generic seven-layer schema checks structure;
+it does not define game predicates or replace a native validator. The shared
+shape uses <code>situation</code>, <code>belief</code>, <code>goal</code>, <code>skill</code>, <code>strategy</code>, <code>execution</code>, and
+<code>update</code>; <code>strategy</code> is an ordered list of <code>id / when / skill / for</code> rules.
+The <a href="https://github.com/Metta-AI/optimizer-seed/blob/aaln/semantic-ir-symbolic-loop/docs/specs/semantic-ir/semantic-ir.schema.json">structural schema</a> validates that shape only.</p>
+<p>Legacy import preserves original Python/JSON/source bytes and original hashing
+profile. The adapter may supply a normalized view but it must remain explicitly
+linked to the original. Add fields only through a versioned schema, not by
+mutating documents an existing strict validator expects to have exactly nine keys.</p>
+<h2 id="contracts-python-and-json-values">Python and JSON values</h2>
+<p>The new portable authoring profile is <code>optimizer-json-data/1</code>:</p>
+<ul>
+<li>Exactly one <code>POLICY = &lt;literal&gt;</code> or <code>MODEL = &lt;literal&gt;</code> assignment, optionally
+  preceded by a module docstring. Comments and whitespace are harmless.</li>
+<li>Dictionaries have unique string keys. Lists, strings, booleans, null/None and
+  integers in <code>[-9007199254740991, 9007199254740991]</code> are supported. No tuples,
+  sets, byte strings, executable expressions, attributes, imports or calls.</li>
+<li>New numeric fractions/quantities use decimal strings with an adapter-declared
+  unit/interpretation. This restriction avoids accidental cross-language float
+  and large-integer hash drift; it does not silently reject/import-rewrite old
+  native profiles that already contain floats.</li>
+<li>JSON rejects duplicate keys, non-finite constants, floats under this profile,
+  invalid Unicode scalars and values outside these types/bounds. Empty and absent
+  fields differ. Unicode text is preserved, not normalized.</li>
+<li>Canonical data bytes are UTF-8 encoding of Python's
+  <code>json.dumps(value, sort_keys=True, ensure_ascii=False, separators=(",", ":"), allow_nan=False)</code>
+  after validation. Key ordering is Unicode code-point order. Array order is
+  retained. No trailing newline enters this data digest. This is a named local
+  profile, <strong>not</strong> a claim to implement RFC 8785/JCS.</li>
+<li><code>data_sha256 = SHA256(b"optimizer-json-data/1\n" + canonical_bytes)</code>.
+  File hashes separately cover exact stored bytes, including final newlines.
+  Non-Python implementations must pass the same checked-in test vectors.</li>
+</ul>
+<p>Parsing must be resource bounded; production limits are part of the profile
+(max bytes, depth, nodes and string lengths). The example checker applies a
+1 MiB input and 64-level value-depth limit. Native production profiles must
+choose limits large enough for real policies and pin them in compatibility tests.
+Untrusted files never execute during import. Compiler plugins are trusted,
+versioned build tools invoked in a controlled runtime with only declared inputs.</p>
+<h2 id="contracts-package-manifest-and-identities">Package manifest and identities</h2>
+<p><code>package.json</code> has schema <code>optimizer.semantic-package/1</code> and contains:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>revision_id</code>, <code>parent_revision</code></td>
+<td>Immutable revision identity and lineage; parent may be null only for a root import</td>
+</tr>
+<tr>
+<td><code>kind</code>, <code>native_schema</code></td>
+<td>Artifact type and adapter's schema discriminator</td>
+</tr>
+<tr>
+<td><code>policy_id</code></td>
+<td>Stable logical policy/model name; does not identify uploaded content alone</td>
+</tr>
+<tr>
+<td><code>game</code></td>
+<td>Game/task ID, exact release, engine source/artifact hash and configuration reference</td>
+</tr>
+<tr>
+<td><code>adapter</code></td>
+<td>Adapter identity/version, binding-lock hash, declared operations and normalization profile</td>
+</tr>
+<tr>
+<td><code>artifacts</code></td>
+<td>Package-relative path, role, byte SHA-256 and size for each frozen member</td>
+</tr>
+<tr>
+<td><code>projection</code></td>
+<td>Behavior-affecting IR projection identity and hash, when supported; otherwise null with reason</td>
+</tr>
+<tr>
+<td><code>checks</code></td>
+<td>References to immutable receipts, not unverified boolean claims</td>
+</tr>
+<tr>
+<td><code>provenance</code></td>
+<td>Import/source/author/experiment/contribution references, plus ownership boundary</td>
+</tr>
+</tbody>
+</table></div>
+<p>The manifest inventory covers transitive compiler imports, templates, source
+weights/constants, pinned engine data, normalization code and build flags, or a
+locked reproducible recipe plus content hashes for externally retrieved inputs.
+An artifact is not portable if its dependency exists only in a sibling checkout.
+The inventory's role distinguishes literal authoring data from executable source:
+GotA and Pudge both use a filename <code>policy.py</code> for different roles. Preserve native
+Markdown IR where applicable; any common JSON projection has its own adapter,
+hash and assurance level, or is explicitly unavailable on a read-only import.
+Disallow absolute paths, traversal, symlink escapes and duplicate artifact paths.
+Verify bytes and dependency identities before loading a plugin. Generate a
+separate manifest digest so the inventory does not require a self-referential hash.
+Do not serialize credentials or expiring signed URLs as artifact locations.</p>
+<p>Keep these identities distinct: IR data hash, raw IR file hash, authored Python
+hash, behavior projection hash, generated source hash, compiled executable hash,
+binding/compiler closure hash, engine/runtime hash and uploaded policy-version ID.
+A projection is defined by the adapter's actual reads; if goal ordering affects
+compilation, <code>goal</code> belongs in that projection. Uncertainty about compiler reads
+requires a conservative projection, not an optimistic cache hit.</p>
+<p>A candidate can lack execution receipts. Retention requires the full admission
+set declared by its experiment/profile. <code>inferred_opponent</code> packages need no
+symbolic executable; they must not fabricate one to satisfy a policy schema.</p>
+<h2 id="contracts-proposed-adapter-protocol">Proposed adapter protocol</h2>
+<p>The production neutral command is proposed as:</p>
+<pre><code class="language-text">python -m optimizer_semantic &lt;operation&gt; --request request.json --output new-folder
+</code></pre>
+<p>There is no <code>optimizer_semantic</code> module in this branch. Stage 1 implements the
+router; game implementations remain behind the MIXIN entry. Use structured argv,
+not shell snippets from a policy or recording. Stdout carries one JSON result;
+diagnostics go to stderr. Output paths are new directories, never in-place
+incumbent edits. Non-success is nonzero and still emits a structured receipt.</p>
+<p>Every request has <code>request_id</code>, <code>operation</code>, <code>adapter_ref</code>, <code>package_ref</code>, expected
+parent/subject hashes and input artifact references. Responses repeat these IDs,
+carry <code>status</code>, output artifact references and explicit diagnostics/limitations.
+An idempotent retry of a completed identical request returns the same receipt;
+reusing an ID for different input fails.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Operation</th>
+<th>Required result</th>
+<th>Common refusal</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>capabilities</code></td>
+<td>Native schemas, artifact kinds, operations and exact assurance/equivalence levels</td>
+<td>Missing/stale binding</td>
+</tr>
+<tr>
+<td><code>validate</code></td>
+<td>Structural + native invariants and dataflow report</td>
+<td>Bad references, unsupported fields, facts read before defined</td>
+</tr>
+<tr>
+<td><code>compile</code></td>
+<td>Source artifact, full dependency manifest, block/source map</td>
+<td>Inferred model, unknown operator, target drift</td>
+</tr>
+<tr>
+<td><code>extract</code></td>
+<td>Recognized IR, all source coverage, ambiguity/unknown spans, semantic claims requiring review</td>
+<td>Unconsumed source or more than one matching contract</td>
+</tr>
+<tr>
+<td><code>check-pair</code></td>
+<td>Both round-trip laws and exact Python/JSON equality, separately reported</td>
+<td>Mismatched views or weak equivalence mislabeled exact</td>
+</tr>
+<tr>
+<td><code>trace</code></td>
+<td>Decision/event stream with observation authority and coverage</td>
+<td>Missing source identity or unverifiable instrumentation</td>
+</tr>
+<tr>
+<td><code>audit-replay</code></td>
+<td>Complete consumption/tick/hash/roster/outcome validation, separately from VM health</td>
+<td>Wrong engine, truncated tape, incomplete actor status</td>
+</tr>
+<tr>
+<td><code>check-fidelity</code></td>
+<td>Independent positive/negative/history/interruption results for baseline/candidate</td>
+<td>Candidate modified frozen verifier/tests</td>
+</tr>
+<tr>
+<td><code>observe-opponent</code></td>
+<td>Frozen data selection, fitted model and heldout scoring with limits</td>
+<td>Leakage, contaminated split or unknown identity</td>
+</tr>
+<tr>
+<td><code>qualify-proxy</code></td>
+<td>Intervention/closed-loop results and a declared usable envelope</td>
+<td>Category accuracy offered as reactive fidelity</td>
+</tr>
+</tbody>
+</table></div>
+<p>Unsupported capabilities are returned as <code>unavailable</code> with a reason. Other
+supported work can proceed, but a controller cannot silently downgrade a claim
+that requires the missing operation. Core uploads/evaluations/submission remain
+with the existing seed skills, not hidden inside conversion or observation calls.</p>
+<h2 id="contracts-check-receipts-and-invalidation">Check receipts and invalidation</h2>
+<p>A receipt identifies: subject artifact hashes, predicate/claim checked, method
+and version/hash, engine/config/roster where relevant, input evidence, status,
+coverage, metrics, exclusions, output hashes and limitations. Exact status enum:
+<code>not_run | passed | failed | unavailable | stale</code>.</p>
+<p>A passed check is scoped to those bytes and assumptions. A performance report
+also carries frozen plan, eligible/purchased/completed/invalid counts, all arms,
+W/L/D or native outcome, per-group decompositions, uncertainty unit and trajectory
+cluster count. Never attach an unqualified <code>passed</code> to a whole policy because
+one receipt passed. Authority/submission state is a separate record.</p>
+<p>Superseding a receipt is append-only: new receipt, previous ID, reason and new
+method/assumptions. A claim record has stable ID, statement, provenance
+(<code>authored | observed | inferred | source_verified | unknown</code>), support status,
+evidence references, scope and invalidation triggers. A probability of an action
+is not a probability that the author's inferred goal is true.</p>
+<h2 id="contracts-episode-and-decision-records">Episode and decision records</h2>
+<p>Episode header: ID, game/runtime/config, exact actor→policy/source bindings,
+roles/seats, seed/RNG provenance, result, trace source, coverage and decoder.
+Observer-specific views are explicitly separated from retrospective truth.</p>
+<p>A decision record requires:</p>
+<pre><code class="language-text">id = episode/actor/decision
+clock: observation_tick, actor_decision_index, command_application_tick
+perspective: observer actor, allowed fields/history, visibility mask source
+observation_ref; memory_before_ref; memory_after_ref
+rules: ordered [{rule_id, evaluated, matched, inputs_ref, skill, goal_refs}]
+commands: ordered [{index, rule_id, channel, operation, arguments,
+                    acceptance: accepted|rejected|unknown,
+                    effect_ref, overwritten_by_or_cancels}]
+execution: start/end, retained target/parameters, termination/preemption reason
+gaps: missing evaluations, sampled intervals, unavailable acceptance
+provenance: IR/source/binding/trace hashes, observed|reconstructed
+</code></pre>
+<p>Rules not evaluated because control flow short-circuits are distinguishable from
+rules evaluated false. An event not visible remains unknown, not false. Replay
+truth and privately reconstructed opponent memory may be referenced in audit
+records but cannot be model input under an observation-only profile.</p>
+<p>Narrative decision blocks cite stable stream IDs and retain <code>[unglossed] terms.
+Fidelity is</code>consistent | inconsistent | unresolvable<code>, with exact scope.
+Decision quality is</code>untested` unless the required responsive interventions were
+actually executed. A sampled snapshot cannot certify full rule-by-rule fidelity.</p>
+<h2 id="contracts-opponent-study-contract">Opponent study contract</h2>
+<p>Before fit: identity, intended use/granularity, authority, eligibility, sample and
+split/group IDs, feature/segmentation code hashes, units/clocks, affordance
+estimation, metrics/baselines, min-opportunity requirements, hypotheses and
+rejection criteria. Freeze heldout access separately from model-building inputs.</p>
+<p>After fit: model/feature hashes, evidence-linked conditional preferences, unknown
+contexts, separate event/timing/target predictions, calibrated uncertainty if
+established, denominators, visibility/censoring, distinct streams and novel versus
+repeated heldout groups. Preserve failed forecasts and alternative explanations.
+No universal sample count is embedded in the core schema.</p>
+<p>A proxy admission record additionally needs exact executable/source, response
+and memory model, valid observation/state/horizon envelope, intervention battery,
+closed-loop divergence, failure/abstention policy, version expiry and the consumer
+that enforces this envelope. A descriptive source audit has no implicit proxy flag.</p>
+<h2 id="contracts-coaching-contribution-and-candidate-patch">Coaching contribution and candidate patch</h2>
+<p>Preserve <code>contribution_id</code>, author/origin, received time, original bytes/hashes,
+reference ID/revision, declared versus execution-verified identity, recording or
+trace clock, exposure to prior agent analysis and actual cost. A corrected
+reference appends its reason and predecessor; original inputs are immutable.</p>
+<p>A candidate patch carries parent hashes, stable semantic/source targets,
+observations, interpretation, alternatives, unknowns, dependent changes, predicted
+behavior, non-trigger/interruption/preservation tests and a prospective decision
+rule. Ideas without recordings have empty evidence lists and untested status;
+validation must not force fabricated citations. Model synthesis can only cite
+existing evidence IDs and valid time bounds. Both the coach and implementation
+account for every frozen contribution and explain unresolved/conflicting input.</p>
+<p>Patch application uses expected-parent compare-and-swap. Both representations
+are saved as one revision. A stale editor or wrong policy reference cannot overwrite
+the incumbent or carry its old evaluation label onto changed source.</p></section></details><details id="appendix-conformance"><summary>Conformance and implementation gates</summary><section id="conformance"><h1 id="conformance-required-conformance-and-admission-tests">Required conformance and admission tests</h1>
+<p>These are acceptance criteria for implementation, not a report of completed
+production checks. The current <a href="https://github.com/Metta-AI/optimizer-seed/blob/aaln/semantic-ir-symbolic-loop/tools/check_semantic_ir_examples.py">fixture checker</a>
+only implements the rows explicitly marked <strong>fixture</strong>. Its purpose is to make
+the representation proposal reviewable without pretending a game compiler exists.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Adversarial case</th>
+<th>Required outcome</th>
+<th>Current coverage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>R01</td>
+<td>Python and JSON have one parameter difference</td>
+<td>Reject pair; identify data path</td>
+<td>fixture</td>
+</tr>
+<tr>
+<td>R02</td>
+<td>Python imports/calls code while defining POLICY</td>
+<td>Reject without executing it</td>
+<td>fixture</td>
+</tr>
+<tr>
+<td>R03</td>
+<td>Python/JSON duplicate dictionary key</td>
+<td>Reject before loss of the earlier value</td>
+<td>fixture</td>
+</tr>
+<tr>
+<td>R04</td>
+<td>NaN, float under integer profile, huge integer, surrogate or excessive nesting</td>
+<td>Reject with profile/limit error</td>
+<td>fixture</td>
+</tr>
+<tr>
+<td>R05</td>
+<td>Rule points to missing predicate, skill or goal</td>
+<td>Reject native/example profile</td>
+<td>fixture</td>
+</tr>
+<tr>
+<td>R06</td>
+<td>Inferred opponent passed to own-policy admission</td>
+<td>Reject kind/schema; never call compiler</td>
+<td>fixture</td>
+</tr>
+<tr>
+<td>R07</td>
+<td>Forecast-only opponent asserts rollout availability</td>
+<td>Reject unsupported capability claim</td>
+<td>fixture</td>
+</tr>
+<tr>
+<td>R08</td>
+<td>JSON object key order changes but list order does not</td>
+<td>Same data hash; raw file hash may differ</td>
+<td>fixture</td>
+</tr>
+<tr>
+<td>R09</td>
+<td>Statement added outside/between recognized regions</td>
+<td>Reject whole-program extraction</td>
+<td>adapter required</td>
+</tr>
+<tr>
+<td>R10</td>
+<td>Rule comments spoof identity or unsupported logic</td>
+<td>Reject/recognize actual code, not comments</td>
+<td>adapter required</td>
+</tr>
+<tr>
+<td>R11</td>
+<td>Two complete bindings recognize the same source</td>
+<td>Reject ambiguous reverse result</td>
+<td>adapter required</td>
+</tr>
+<tr>
+<td>R12</td>
+<td>New branch recognized after silently ignoring an opaque kernel</td>
+<td>Reject; require explicit hashed dependency boundary</td>
+<td>adapter required</td>
+</tr>
+<tr>
+<td>R13</td>
+<td>Compiler dependency or pinned engine data missing/changed</td>
+<td>Fail clean-host reproduction</td>
+<td>package runtime required</td>
+</tr>
+<tr>
+<td>R14</td>
+<td>Source and IR independently edited from stale parents</td>
+<td>Conflict; preserve both proposals</td>
+<td>controller required</td>
+</tr>
+<tr>
+<td>R15</td>
+<td>Behavior changes but evaluation label stays “kept”</td>
+<td>New candidate; stale relevant receipts</td>
+<td>controller required</td>
+</tr>
+<tr>
+<td>F01</td>
+<td>Two matching rules write different channels</td>
+<td>Preserve both actions in order</td>
+<td>adapter required</td>
+</tr>
+<tr>
+<td>F02</td>
+<td>Movement cancels earlier attack intent</td>
+<td>Trace requested/accepted/effective states separately</td>
+<td>adapter required</td>
+</tr>
+<tr>
+<td>F03</td>
+<td>Earlier rule changes state read by a later guard</td>
+<td>Match declared sequential or snapshot semantics</td>
+<td>adapter required</td>
+</tr>
+<tr>
+<td>F04</td>
+<td>Missing rule trace or sampled action acceptance</td>
+<td>Fidelity unresolvable, not passed</td>
+<td>episode adapter required</td>
+</tr>
+<tr>
+<td>F05</td>
+<td>Synthetic activation passes but no full-game trigger occurs</td>
+<td>Report zero activation; no mechanism improvement claim</td>
+<td>evaluator required</td>
+</tr>
+<tr>
+<td>F06</td>
+<td>Same observation but different prior memory</td>
+<td>Correct history-sensitive behavior/reset</td>
+<td>adapter required</td>
+</tr>
+<tr>
+<td>F07</td>
+<td>Trace instrumentation alters command sequence or runtime limit</td>
+<td>Reject claimed equivalence, preserve failure</td>
+<td>adapter required</td>
+</tr>
+<tr>
+<td>F08</td>
+<td>Candidate edits checker or weakens frozen tests</td>
+<td>Block admission</td>
+<td>controller required</td>
+</tr>
+<tr>
+<td>F09</td>
+<td>Scenario models an impossible or rejected action as successful</td>
+<td>Flag construct/reachability gap; require game effect test</td>
+<td>evaluator required</td>
+</tr>
+<tr>
+<td>O01</td>
+<td>Fit uses post-action target, hidden HP, private memory or pooled vision</td>
+<td>Reject observation-only dataset/features</td>
+<td>opponent adapter required</td>
+</tr>
+<tr>
+<td>O02</td>
+<td>Heldout streams repeat training despite different seeds</td>
+<td>Disclose repetition and lack of novel transfer</td>
+<td>opponent adapter required</td>
+</tr>
+<tr>
+<td>O03</td>
+<td>Strong category accuracy used as timing/target/proxy proof</td>
+<td>Refuse unsupported claim</td>
+<td>model evaluator required</td>
+</tr>
+<tr>
+<td>O04</td>
+<td>Source branch exists but never exercised</td>
+<td>Unidentified from observation; test discriminator</td>
+<td>source audit required</td>
+</tr>
+<tr>
+<td>O05</td>
+<td>New source reveal replaces old observational score/freeze</td>
+<td>Refuse overwrite; new source-audit artifact</td>
+<td>controller required</td>
+</tr>
+<tr>
+<td>O06</td>
+<td>Source-derived proxy matches a tape but diverges after our intervention</td>
+<td>Fail reactive qualification</td>
+<td>proxy evaluator required</td>
+</tr>
+<tr>
+<td>O07</td>
+<td>Opponent version/state/horizon outside proxy envelope</td>
+<td>Abstain or block rollout, not silent reuse</td>
+<td>runtime required</td>
+</tr>
+<tr>
+<td>E01</td>
+<td>Counterfactual continues recorded future opponent actions</td>
+<td>Label frozen-world diagnostic; no decision-quality verdict</td>
+<td>evaluator required</td>
+</tr>
+<tr>
+<td>E02</td>
+<td>One color improves and the other regresses</td>
+<td>Per-color result; reject if frozen rule requires both</td>
+<td>game eval binding required</td>
+</tr>
+<tr>
+<td>E03</td>
+<td>Candidate crashes excluded to improve average</td>
+<td>Quarantine scores, retain invalid denominator; fail validity gate</td>
+<td>evaluator required</td>
+</tr>
+<tr>
+<td>E04</td>
+<td>New policy bytes after looking at confirmation</td>
+<td>New candidate and fresh confirmation</td>
+<td>controller required</td>
+</tr>
+<tr>
+<td>E05</td>
+<td>Repaired verifier assesses unchanged rejected source</td>
+<td>New linked assessment; preserve old verdict and plan</td>
+<td>controller required</td>
+</tr>
+<tr>
+<td>C01</td>
+<td>Co-play selected reference disagrees with executed episode</td>
+<td>Restrict diagnosis; append correction, supersede old analysis</td>
+<td>importer required</td>
+</tr>
+<tr>
+<td>C02</td>
+<td>Capture ms mapped directly to ticks across pause</td>
+<td>Reject timing inference; require segmented mapping</td>
+<td>importer required</td>
+</tr>
+<tr>
+<td>C03</td>
+<td>Contribution arrives midway through frozen cycle</td>
+<td>Queue or explicit authorized rebase; retain original</td>
+<td>controller required</td>
+</tr>
+<tr>
+<td>C04</td>
+<td>Human intent and model interpretation disagree</td>
+<td>Preserve both, disposition and discriminating test</td>
+<td>coach/controller required</td>
+</tr>
+<tr>
+<td>C05</td>
+<td>Idea has no recording</td>
+<td>Accept untested hypothesis; do not invent evidence</td>
+<td>coach/importer required</td>
+</tr>
+<tr>
+<td>P01</td>
+<td>Crash between IR/code publication or during pointer update</td>
+<td>Last complete incumbent remains usable</td>
+<td>controller required</td>
+</tr>
+<tr>
+<td>P02</td>
+<td>Retried paid request after lost response</td>
+<td>Reconcile stable idempotency key and reservation</td>
+<td>controller required</td>
+</tr>
+<tr>
+<td>P03</td>
+<td>Two hosts both see local lock as free</td>
+<td>Shared transactional lease or single host; no dual writer</td>
+<td>controller required</td>
+</tr>
+<tr>
+<td>P04</td>
+<td>Passing tests interpreted as permission to submit</td>
+<td>Route to existing explicit-authority submit process</td>
+<td>controller required</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="conformance-stage-acceptance">Stage acceptance</h2>
+<p>Stage 0: run <code>python3 tools/check_semantic_ir_examples.py</code>. This verifies safe
+literal import, strict values, Python/JSON equality, example references and
+artifact-kind boundaries. It does not execute the symbolic sketch.</p>
+<p>Stage 1–2: import frozen GotA and Pudge examples unchanged; run round-trip,
+malicious/mutated source and binding tests; relocate all required inputs to a new
+checkout/runtime; compare command behavior with instrumentation enabled/disabled.
+Check a real semantic intervention and a negative case that kills the hypothesis.</p>
+<p>Stage 3–4: exercise wrong/corrected session references, clocks and uncertainty;
+reproduce a single-observer opponent study with holdout protected; explicitly
+refuse the current motif models as reactive proxies. If source becomes available,
+prove source identity and preserve the original observational results.</p>
+<p>Stage 5: fault-inject at every journal/publish step, resume without duplicate spend,
+retain invalid and refuted attempts, enforce stale-parent checks, and demonstrate
+one retained and one rejected/inconclusive cycle. Game-specific hosted admission
+is required for claims about live competition.</p>
+<h2 id="conformance-evaluate-the-workflow-rather-than-one-lucky-policy">Evaluate the workflow rather than one lucky policy</h2>
+<p>Freeze starting policy, model version, allowed tools, training data and total
+allowance. Isolate direct-code and IR-loop research arms, evaluator/holdout and
+memory. Measure repeated independent runs, not just repeated game seeds. Separate
+human-assisted versus autonomous treatment from the IR treatment; use a declared
+factorial/ablation design if isolating them. Count transcription/media, coaching,
+coding, failures and retry costs. Report conversion coverage, intended-behavior
+realization, regressions, invalidity, heldout policy gains and gain per total cost.</p></section></details><details id="appendix-sources"><summary>Source review and measured lessons</summary><section id="sources"><h1 id="sources-source-review-what-to-preserve-strengthen-and-avoid-generalizing">Source review: what to preserve, strengthen and avoid generalizing</h1>
+<p>Reviewed 2026-09-20 for <a href="#spec">Spec 0001</a>.
+This review inspected source and existing experiment records. It did <strong>not</strong> rerun
+their hosted studies or verify today's leaderboard. Reported outcomes below keep
+their original scope; they are design evidence, not new competitive results.</p>
+<p><a href="https://github.com/Metta-AI/optimizer-seed/blob/aaln/semantic-ir-symbolic-loop/docs/specs/semantic-ir/sources.json">sources.json</a> records exact commits, inspected paths, byte hashes
+and sizes. All 29 listed repository files match the pinned commits. User-provided
+Downloads guides have separate hashes; those absolute paths are provenance only.
+The existing seed and IDE working copies had unrelated changes, so the extension
+was made in an isolated worktree from seed commit <code>7ebea8733433</code>.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Source family</th>
+<th>Pinned snapshot</th>
+<th>What was reviewed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>optimizer-seed</td>
+<td><code>7ebea87334331e8410f4c0f2ccf5e2376d81cd1f</code></td>
+<td>Constitution, experiment process, policy development, growth and MIXIN contract</td>
+</tr>
+<tr>
+<td>Our GotA work in polyworld</td>
+<td><code>38ea61ceb477b665a05ff29ed3e1a81e9a9aec0a</code></td>
+<td>Native compiler/recognizer, literal Python/JSON policies, episode/opponent guides, repair and opponent records</td>
+</tr>
+<tr>
+<td>policy-loop-ide (repository name: Co-play)</td>
+<td><code>935c221469f67c88727d61dd27044d80a3336e9d</code></td>
+<td>Versioned policy store, references, coaching synthesis, Pudge pair converter and autoresearch controller</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="sources-1-preserve-the-primary-pythonjson-ir-and-its-bounded-embedding">1. Preserve the primary Python/JSON IR and its bounded embedding</h2>
+<p>The <a href="https://github.com/aaln/polyworld/blob/38ea61ceb477b665a05ff29ed3e1a81e9a9aec0a/examples/gods_of_the_arena/players/ir/policy_ir.py">GotA compiler</a> uses exactly <code>schema</code>, <code>id</code>, <code>situation</code>,
+<code>belief</code>, <code>goal</code>, <code>skill</code>, <code>strategy</code>, <code>execution</code>, <code>update</code>. Strategy is an ordered
+list of four-field rules (<code>id</code>, <code>when</code>, <code>skill</code>, <code>for</code>); skills and goals are maps.
+It validates operator parameters, references, memory/dataflow and derived
+groundings. Python <code>POLICY</code> is the human-readable authoring form; JSON is checked
+against it and BASIC is generated through explicit contracts. The
+<a href="https://github.com/aaln/polyworld/blob/38ea61ceb477b665a05ff29ed3e1a81e9a9aec0a/examples/gods_of_the_arena/players/ir/opponent_ir.py">opponent reader</a> uses <code>MODEL</code> and a distinct schema with the
+same layers and rule grammar.</p>
+<p>The recognizer covers the full supported executable and rejects unrecognized or
+ambiguous logic. A parent supplies attributed semantic context; executable edits
+invalidate claims. Goal prose is not recovered intention, and executable
+projection hashes are different from source-byte identities.</p>
+<p><strong>Carry forward:</strong> stable blocks, literal Python/JSON parity, exact schema IDs,
+bounded bidirectional conversion, explicit groundings and executable dependency
+closure. <strong>Strengthen:</strong> duplicate-key rejection, typed canonical values, unsafe
+Python rejection, capability dispatch, and portable package manifests. Preserve
+legacy hashes instead of silently applying a new normalization profile.</p>
+<h2 id="sources-2-episode-ir-needs-all-rules-clocks-and-unknowns">2. Episode IR needs all rules, clocks and unknowns</h2>
+<p>The user's newer <code>guide-episode-semantic-ir (1).md</code>, particularly §11, corrects
+the earlier single-winning-rule assumption. It covers disjoint/overlapping
+outputs, entangled observation/strategy, reconstructed traces, thin glossaries
+and unavailable responsive rollouts. The <a href="https://github.com/aaln/polyworld/blob/38ea61ceb477b665a05ff29ed3e1a81e9a9aec0a/docs/guides/guide-episode-semantic-ir.md">repository episode guide</a>
+is the portable source reference.</p>
+<p><strong>Carry forward:</strong> policy-perspective situation/belief, separate retrospective
+truth, stable decision IDs, <code>[unglossed]</code> findings, and independent fidelity and
+decision-quality sections. <strong>Strengthen:</strong> cross-channel cancellation, sequential
+guard reads, requested versus accepted/effective commands, actor decision clocks,
+respawn memory and complete coverage checks. Fixed decision-count expectations
+and default rollout counts are study heuristics, not universal admission rules.</p>
+<p>A reconstruction can reproduce the recorded tape while still failing after an
+intervention. The extension therefore adds intervention/closed-loop qualification
+before a reconstructed opponent is used responsively; retrospective equivalence
+alone is insufficient. A negative outcome does not by itself diagnose execution,
+and the best tested alternative does not prove every other layer correct.</p>
+<h2 id="sources-3-actual-iterations-distinguish-activation-fidelity-and-performance">3. Actual iterations distinguish activation, fidelity and performance</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Iteration</th>
+<th>Reported evidence</th>
+<th>Extension requirement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://github.com/aaln/polyworld/blob/38ea61ceb477b665a05ff29ed3e1a81e9a9aec0a/examples/gods_of_the_arena/players/ir/forks/jordan268/README.md">Jordan v268 counter</a></td>
+<td>Confirmation: 40/40 on each color in the bounded matchup; generated seeds included repeated streams. An earlier wave-clear screen of 3/4 fell to 14/40.</td>
+<td>Freeze the executable and prospective criteria; confirm and report trajectory diversity.</td>
+</tr>
+<tr>
+<td><a href="https://github.com/aaln/polyworld/blob/38ea61ceb477b665a05ff29ed3e1a81e9a9aec0a/docs/reports/2026-09-20-alex-policy-history.md">Alex policy history</a></td>
+<td>The remote-defense change that helped Jordan removed useful behavior against exact Alex. Historical red results varied across cohorts.</td>
+<td>Preserve exact opponent/seat controls and regressions, not aggregate success labels.</td>
+</tr>
+<tr>
+<td><a href="https://github.com/aaln/polyworld/blob/38ea61ceb477b665a05ff29ed3e1a81e9a9aec0a/docs/experiments/gota-repairs-20260920/README.md">Two support restorations</a></td>
+<td>Each scored 3/6, equal to control, with every command unchanged despite passing activation fixtures.</td>
+<td>Independently test real-world trigger opportunities and activation; added code is not changed play.</td>
+</tr>
+<tr>
+<td><a href="https://github.com/aaln/polyworld/blob/38ea61ceb477b665a05ff29ed3e1a81e9a9aec0a/docs/experiments/gota-repairs-20260920/README.md">Caster transit and broad recall</a></td>
+<td>Transit: local 30/32 versus 16/32, accepted ancestor 40/40 each color, Richard red 0/40. Broad defensive variants harmed other comparisons.</td>
+<td>Local and ancestor wins cannot substitute for the target test; retain refuted scope.</td>
+</tr>
+<tr>
+<td><a href="https://github.com/aaln/polyworld/blob/38ea61ceb477b665a05ff29ed3e1a81e9a9aec0a/examples/gods_of_the_arena/players/ir/forks/richard135-coaching-20260920/README.md">Richard coaching fork</a></td>
+<td>Richard blue 40/40, red 0/40; failed runtime-admission history was preserved.</td>
+<td>Validity and per-color outcomes remain separate obligations; test dense runtime cases.</td>
+</tr>
+<tr>
+<td><a href="https://github.com/aaln/polyworld/blob/38ea61ceb477b665a05ff29ed3e1a81e9a9aec0a/examples/gods_of_the_arena/players/ir/forks/richard135-transition-20260920/README.md">Richard transition fork</a></td>
+<td>Richard red 0/40 and blue 40/40, but candidate versus Alex red 2/40 and blue 0/40; Jordan 0/40 each color.</td>
+<td>A repair must satisfy the full declared regression matrix on the same artifact.</td>
+</tr>
+<tr>
+<td><a href="https://github.com/aaln/polyworld/blob/38ea61ceb477b665a05ff29ed3e1a81e9a9aec0a/examples/gods_of_the_arena/players/ir/forks/formation-adaptive-20260920/README.md">Later adaptive formation package</a></td>
+<td>All 640 hosted games audited across discovery and confirmation. Fresh confirmation: Alex and Jordan 40/40 each color; Richard red 0/40, blue 40/40. No invalid games.</td>
+<td>A coordinated package can succeed against two targets while leaving one color unresolved. Component causality and broader transfer require separate tests.</td>
+</tr>
+</tbody>
+</table></div>
+<p>The adaptive study's confirmation contains only two distinct streams for each
+Jordan color and one for Richard red. Its Richard control was historical, not a
+fresh A/B. The study does not establish Richard red improvement or broad-field
+leadership. Public inventory profiles were behavior features with collision and
+abstention limits, not reliable player identification. Its frozen compiler archive
+and instantiated contracts demonstrate the intended move beyond a fixed list of
+copied modules to complete, relocatable dependencies.</p>
+<h2 id="sources-4-opponent-observation-and-source-audit-answer-different-questions">4. Opponent observation and source audit answer different questions</h2>
+<p>The initial Downloads opponent guide provides population/individual/in-episode
+models, observable affordances, provisional hypotheses and heldout prediction.
+The <a href="https://github.com/aaln/polyworld/blob/38ea61ceb477b665a05ff29ed3e1a81e9a9aec0a/docs/guides/guide-opponent-model-ir.md">revised repository guide</a> strengthens event/timing semantics,
+observation authority and model/proxy separation. Its original numerical defaults
+(such as eight observations) remain study conventions, not universal evidence bars.</p>
+<p>The <a href="https://github.com/aaln/polyworld/blob/38ea61ceb477b665a05ff29ed3e1a81e9a9aec0a/docs/opponents/richard-alex-20260920/analysis.md">Richard/Alex inference study</a> reports a coarse model. Alex's
+heldout streams repeated training, limiting claims about novel generalization.
+Prediction at retrospectively identified motif starts is not online onset
+prediction. Richer recorded features do not count as fitted-model inputs.</p>
+<p>The later <a href="https://github.com/aaln/polyworld/blob/38ea61ceb477b665a05ff29ed3e1a81e9a9aec0a/docs/opponents/richard-v135/source-audit-20260920/README.md">Richard v135 source audit</a> preserved the original
+694/923 correct forecasts versus population 502/923 and three heldout stream
+clusters. Only 18.3% of living opponent hero-ticks were visible to the selected
+observer. Authentic source replay matched 915,098 commands over 20 games and all
+five Richard VMs. The source revealed a 25→16→18 neural controller evaluated every
+four living decisions plus ordered scripted overrides and post-hit recovery.
+The v135 tower-retaliation branch had <strong>zero activation in that corpus</strong>.</p>
+<p><strong>Carry forward:</strong> frozen original models and failed forecasts, source custody,
+per-claim comparisons, explicit unknown goals and discriminator tests.
+<strong>Strengthen:</strong> four distinct artifact kinds (our policy, inferred opponent,
+source audit, reactive proxy); declared granularity; observer-only feature tests;
+cluster/novelty accounting; responsive qualification with an enforced envelope.
+Source-informed synthetic discriminators establish mechanism differences; they
+do not establish a winning counter-policy.</p>
+<h2 id="sources-5-policy-loop-ide-supplies-useful-boundaries-not-a-generic-backend">5. policy-loop-ide supplies useful boundaries, not a generic backend</h2>
+<p>The Pudge prototype's native IR is registered <code>ir.md</code> text; its <code>policy.py</code> is
+executable source. GotA uses <code>policy.py</code> for literal IR authoring. The package
+manifest must assign explicit roles, preserve original bytes, and require a
+validated adapter projection before claiming these are interchangeable formats.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Inspected implementation</th>
+<th>Best practice to transfer</th>
+<th>Current limit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://github.com/Metta-AI/coplay/blob/935c221469f67c88727d61dd27044d80a3336e9d/experiments/pudge-wars/base-ir/starter/ir_tool.py">Registered Pudge converter</a></td>
+<td>Pin IR/implementation/adapter hashes; compare the full recognized program; reject unknown/ambiguous input; preserve outputs.</td>
+<td>Exact registered-program identity does not prove prose meaning or support arbitrary semantic edits.</td>
+</tr>
+<tr>
+<td><a href="https://github.com/Metta-AI/coplay/blob/935c221469f67c88727d61dd27044d80a3336e9d/experiments/pudge-wars/base-ir/starter/INTERFACE.md">Pudge runtime interface</a></td>
+<td>Permitted observations, isolated persistent memory, requested action protocol and observed acceptance.</td>
+<td>Game-specific interface and tests; do not treat it as GotA's runtime.</td>
+</tr>
+<tr>
+<td><a href="https://github.com/Metta-AI/coplay/blob/935c221469f67c88727d61dd27044d80a3336e9d/app/store.cjs">Policy store</a></td>
+<td>Expected-revision checks, stale evaluation invalidation, explicit authoring direction and Git restore history.</td>
+<td>Converter is wired for Pudge; save/Git operations do not yet constitute a multi-host atomic controller.</td>
+</tr>
+<tr>
+<td><a href="https://github.com/Metta-AI/coplay/blob/935c221469f67c88727d61dd27044d80a3336e9d/app/session-reference.cjs">Session reference resolver</a></td>
+<td>Corrected <code>reference.json</code> supersedes old association/analysis while preserving original capture.</td>
+<td>Selection is not proof the selected source executed.</td>
+</tr>
+<tr>
+<td><a href="https://github.com/Metta-AI/coplay/blob/935c221469f67c88727d61dd27044d80a3336e9d/app/synthesis-schema.cjs">Synthesis schema</a></td>
+<td>Ground proposals in existing evidence IDs/times; distinguish uncertainty and intent; account for coverage.</td>
+<td>Model synthesis and coverage review remain interpretations, not independent observations.</td>
+</tr>
+<tr>
+<td><a href="https://github.com/Metta-AI/coplay/blob/935c221469f67c88727d61dd27044d80a3336e9d/experiments/pudge-wars/runner/autoresearch.py">Pudge autoresearch runner</a></td>
+<td>Isolated candidates, frozen regression assets/verifier, input accounting, cost reservation, safe incumbent, append-only recheck after verifier repair.</td>
+<td>Local pilot scoring/thresholds are task-specific; hosted admission stays in the seed process.</td>
+</tr>
+<tr>
+<td><a href="https://github.com/Metta-AI/coplay/blob/935c221469f67c88727d61dd27044d80a3336e9d/docs/context-capture.md">Capture findings</a></td>
+<td>Bind runs before diagnosis and retain explicit clock mapping.</td>
+<td>Recording time can drift or include wrong setup; sampled media cannot resolve command order.</td>
+</tr>
+<tr>
+<td><a href="https://github.com/Metta-AI/coplay/blob/935c221469f67c88727d61dd27044d80a3336e9d/docs/coaching-harness-benchmarks.md">Workflow benchmark plan</a></td>
+<td>Compare IR/direct-code and human/autonomous treatments separately; isolate memory/holdout; include all costs.</td>
+<td>A plan or one pilot is not demonstrated workflow superiority.</td>
+</tr>
+</tbody>
+</table></div>
+<p>The <a href="https://github.com/Metta-AI/coplay/blob/935c221469f67c88727d61dd27044d80a3336e9d/docs/autonomous-coach.md">autonomous coach architecture</a> assigns persistent optimizer state
+to optimizer-seed and capture/contributions to Co-play. The extension follows
+that boundary. It starts with immutable file exchange, and does not copy a second
+acceptance authority into the app or assume remote-agent scheduling is installed.</p>
+<h2 id="sources-6-fit-the-seed-instead-of-replacing-it">6. Fit the seed instead of replacing it</h2>
+<p>The <a href="https://github.com/Metta-AI/optimizer-seed/blob/7ebea87334331e8410f4c0f2ccf5e2376d81cd1f/AGENTS.md">seed constitution</a> already supplies live-field verdicts,
+attributable experiments, small-sample humility, immutable upload identity,
+refutations and explicit submission authority. Its five required game bindings
+remain unchanged. The proposed <code>semantic-policy</code> capability is optional and
+reuses existing record homes. Campaign-specific GotA autonomy is not a seed
+default. Source-derived requirements become tentative lessons and testable
+acceptance criteria; they are not automatically graduated practices.</p>
+<h2 id="sources-review-limits-and-next-implementation-evidence">Review limits and next implementation evidence</h2>
+<p>Stage 0 validates example representation and typing only. It does not prove safe
+production package loading, native semantics, replay fidelity, proxy responses,
+crash recovery or improved research efficiency. <a href="#conformance">Conformance</a>
+enumerates those obligations. Start Stage 1 with unchanged frozen GotA and Pudge
+imports, dependency relocation and malicious/ambiguous extraction cases, then
+earn each additional capability with independent tests.</p></section></details><footer>Self-contained reading copy using the seed report template. Sources are pinned in the included source review. No hosted evaluations were run for this specification. <a href="https://github.com/Metta-AI/optimizer-seed/blob/aaln/semantic-ir-symbolic-loop/docs/specs/0001-semantic-ir-symbolic-loop.md">Review the Markdown spec on the branch</a>.</footer></main><script>function openTarget(){const el=document.getElementById(decodeURIComponent(location.hash.slice(1)));if(!el)return;let p=el.parentElement;while(p){if(p.tagName==='DETAILS')p.open=true;p=p.parentElement;}el.scrollIntoView();}window.addEventListener('hashchange',openTarget);openTarget();</script></body></html>

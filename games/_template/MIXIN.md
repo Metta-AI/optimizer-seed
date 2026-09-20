@@ -76,7 +76,7 @@ required set. List them all: an unlisted skill is an undiscoverable one.)*
 
 | Skill | Path | What it does | Use when |
 |---|---|---|---|
-| *(none)* | | | |
+| `semantic-policy` *(optional, template only)* | `skills/semantic-policy/` | Native IR/source contracts, episode traces and opponent-model capabilities; unavailable until implemented | Authoring or analyzing through the semantic-policy extension |
 
 ## What else this mixin provides
 

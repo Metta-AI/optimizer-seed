@@ -38,7 +38,7 @@ the board fast is explicitly not the goal here; thinking is.
 | Where | What |
 |---|---|
 | `AGENTS.md` | The constitution: the loop, the eight non-negotiables, the one gate, where every fact lives. Your agent reads it every session. |
-| `skills/` | Thirteen process skills — from `meta-recon` (know the field) through `experiment` (falsifiable tests) to `submit` (the gate). Game-agnostic; each resolves its game specifics from the lab's mixin. |
+| `skills/` | Process skills — from `meta-recon` (know the field) through `experiment` (falsifiable tests) to `submit` (the gate), plus the optional `semantic-policy` workflow. Game-agnostic; each resolves its game specifics from the lab's mixin. |
 | `games/<game>/` | Your labs, one per game, installed from per-game **mixins** (`tools/add_game.sh`). Each lab holds the game's docs, bindings, memory, experiments, players, and your accumulated instruments. `games/_template/` is the mixin contract. |
 | `best_practices.md` · `closed_levers.md` · `user_preferences.md` | Durable memory: graduated practice, refuted levers, your stated preferences (including the speed stance and the autonomy dial). |
 | `WORKING_CONTEXT.md` · `TENTATIVE_LESSONS.md` | Live state and the session lesson buffer. Hooks (`tools/`, wired per `harness/`) rotate and nudge automatically — touched labs only, no churn, no filler. |
@@ -51,6 +51,18 @@ If `WORKING_CONTEXT.md` has **no current objective**, this optimizer hasn't
 been onboarded — start with `docs/getting-started.md`, as a guide. A
 recorded objective means onboarding is done: resume from WORKING_CONTEXT and
 never re-ask what's recorded. Everything else you need is in `AGENTS.md`.
+
+## Optional semantic IR extension
+
+[Spec 0001](docs/specs/0001-semantic-ir-symbolic-loop.md) proposes reliable
+Python/JSON semantic IR ↔ symbolic policy iteration, multi-rule episode analysis,
+opponent modeling and coaching integration. It draws on GotA policy iterations
+and the policy-loop-ide experiments. This branch includes contracts, an optional
+game-binding template and [checked examples](examples/semantic-ir/README.md);
+game compilers and the research controller remain staged implementation work.
+
+Run the representation fixtures with `python3 tools/check_semantic_ir_examples.py`.
+The existing experiment workflow and submission gate continue to apply.
 
 ## Origins
 

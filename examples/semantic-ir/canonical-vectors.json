@@ -1,0 +1,46 @@
+[
+  {
+    "value": {
+      "b": 1,
+      "a": 2
+    },
+    "canonical_utf8": "{\"a\":2,\"b\":1}",
+    "data_sha256": "32b105d50e824b4fa7563e554b23ef2d77250dfed1e4aa7684cf8412f878e57e"
+  },
+  {
+    "value": {
+      "z": null,
+      "a": [
+        true,
+        -9007199254740991,
+        9007199254740991
+      ]
+    },
+    "canonical_utf8": "{\"a\":[true,-9007199254740991,9007199254740991],\"z\":null}",
+    "data_sha256": "4adaacb63d1144de7bd1958554f986c29aabbd08b9f3191cd0052d99d7c29bc9"
+  },
+  {
+    "value": {
+      "é": "é",
+      "😀": "雪"
+    },
+    "canonical_utf8": "{\"é\":\"é\",\"😀\":\"雪\"}",
+    "data_sha256": "bfd9ee960381bf322806544a6c585a562deb68d9860abb633b76b2cdab2e9e37"
+  },
+  {
+    "value": [
+      1,
+      2
+    ],
+    "canonical_utf8": "[1,2]",
+    "data_sha256": "7c8ea7ca2fbd2cf763e8494dfc24fa7237cf92efe0ed760eaf108c2a15f60f0b"
+  },
+  {
+    "value": [
+      2,
+      1
+    ],
+    "canonical_utf8": "[2,1]",
+    "data_sha256": "b276f62c91d182d4fd2eed968f1c8300fa768d4f5d3698b9cd24d5a600e7e3b1"
+  }
+]
