@@ -1,0 +1,108 @@
+{
+  "schema": "optimizer.example-own-ir/1",
+  "id": "illustrative_pressure_v1",
+  "situation": {
+    "authority": "our_actor_observation",
+    "predicates": {
+      "target_visible": "A currently visible, legal attack target exists.",
+      "unsafe_after_attack": "After requesting attack, current guard inputs indicate a retreat is needed."
+    },
+    "unknowns": [
+      "Unseen opponent state is unknown."
+    ]
+  },
+  "belief": {
+    "memory": {
+      "retreat_until": {
+        "initial": 0,
+        "reset": "episode"
+      }
+    },
+    "claims": {
+      "B_pressure": {
+        "claim": "Combining pressure with retreat may improve survival.",
+        "status": "untested",
+        "provenance": "authored",
+        "evidence": []
+      }
+    }
+  },
+  "goal": {
+    "G_pressure": {
+      "claim": "Apply pressure when a target is available.",
+      "provenance": "authored"
+    },
+    "G_survive": {
+      "claim": "Retreat when exposed.",
+      "provenance": "authored"
+    }
+  },
+  "strategy": [
+    {
+      "id": "R_attack",
+      "when": "target_visible",
+      "skill": "S_attack",
+      "for": [
+        "G_pressure"
+      ]
+    },
+    {
+      "id": "R_retreat",
+      "when": "unsafe_after_attack",
+      "skill": "S_retreat",
+      "for": [
+        "G_survive"
+      ]
+    }
+  ],
+  "skill": {
+    "S_attack": {
+      "operator": "request_attack",
+      "channel": "combat",
+      "parameters": {
+        "target": "visible_target"
+      },
+      "completion": "Game acceptance and effect remain to be observed."
+    },
+    "S_retreat": {
+      "operator": "request_move",
+      "channel": "movement",
+      "parameters": {
+        "destination": "safe_point"
+      },
+      "interrupts": [
+        "combat"
+      ],
+      "completion": "Arrival, failure, expiry or preemption."
+    }
+  },
+  "execution": {
+    "mode": "symbolic_sketch_only",
+    "usable_as_counterfactual_proxy": false,
+    "rule_order": "list order; all matching rules may emit commands",
+    "guard_sampling": "sequential",
+    "channel_interactions": "A later movement request can cancel attack intent.",
+    "binding": "No game adapter implemented for this example.",
+    "source_map": {
+      "R_attack": "sketch:3",
+      "R_retreat": "sketch:6"
+    }
+  },
+  "update": {
+    "revision": 0,
+    "parent": null,
+    "change": "Initial untested illustrative fixture.",
+    "needs_review": [],
+    "evidence": [],
+    "research_plan": {
+      "proposal_unit": "One named intervention with explicit dependent edits.",
+      "fidelity_tests": [
+        "Positive: both rules match; preserve ordered requests.",
+        "Negative: no visible target produces no attack.",
+        "Interruption: retreat cancels intent only under the pinned game semantics.",
+        "History: prior retreat memory resets at episode boundary."
+      ],
+      "evaluation": "Not run; needs independent native fixtures and hosted comparison."
+    }
+  }
+}

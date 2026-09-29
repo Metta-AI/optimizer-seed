@@ -15,4 +15,5 @@ tell whether a later session hit the same thing.
 
 ---
 
-*(empty)*
+- 2026-09-20 — Candidate lesson from the [GotA/Co-play source review](docs/specs/semantic-ir/source-review.md): keep representation consistency, intended behavior, runtime validity and field performance as independent receipts. An exact converter and passing activation fixture can coexist with zero gameplay activation.
+- 2026-09-20 — Candidate lesson from the same review: forecast accuracy and retrospective source replay do not establish responsive counterfactual fidelity. Type descriptive opponent models separately and qualify each proxy against interventions and an enforced use envelope.

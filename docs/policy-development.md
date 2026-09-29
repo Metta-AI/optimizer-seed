@@ -63,9 +63,26 @@ loop's one-change-at-a-time discipline stays cheap:
   "do Y"; an action layer turns intents into protocol messages. Navigation and
   execution bugs stay in one seam, testable alone.
 
+## Optional semantic IR authoring
+
+When a game supplies a `semantic-policy` binding, use a seven-layer semantic IR
+as an inspectable policy representation alongside its symbolic source. Keep the
+literal Python authoring form and JSON data equal, pin the implementation
+bindings, and reconcile edits into a new immutable pair. Round-trip consistency,
+intended behavior, runtime validity and hosted performance need separate checks.
+An observed opponent's inferred IR is a descriptive artifact until separately
+qualified for responsive execution.
+
+[Spec 0001](specs/0001-semantic-ir-symbolic-loop.md) defines the proposed contracts,
+implementation stages and coaching interface; [examples](../examples/semantic-ir/README.md)
+exercise the representation boundary. The compiler and runtime admission remain
+game-specific. Resolve the actual artifact format through the lab's binding:
+the container requirements below apply to container-based players, while a
+source/VM adapter must document its own build, entry point and limits.
+
 ## The image contract
 
-Every Coworld player is a Docker container with the same platform contract
+Container-based Coworld players use the following Docker platform contract
 (game-agnostic; the protocol *inside* the websocket is the game's):
 
 - **linux/amd64** — hard-checked at upload and run; arm64 is rejected. Build

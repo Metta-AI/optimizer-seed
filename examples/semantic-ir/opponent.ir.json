@@ -1,0 +1,82 @@
+{
+  "schema": "optimizer.example-opponent-ir/1",
+  "id": "illustrative_observed_pressure_v1",
+  "situation": {
+    "authority": "one_observer_visible_history_only",
+    "predicates": {
+      "enemy_visible_near_wave": "An opponent is visible near a wave at this observation."
+    },
+    "unknowns": [
+      "Opponent private memory, unseen actions, intended goal and future responses."
+    ]
+  },
+  "belief": {
+    "memory": {
+      "last_visible_region": {
+        "initial": null,
+        "reset": "episode"
+      }
+    },
+    "claims": {
+      "B_wave": {
+        "claim": "Observed proximity could indicate wave following or shared destination.",
+        "status": "untested",
+        "provenance": "inferred",
+        "evidence": [],
+        "alternatives": [
+          "Same destination without following.",
+          "Visibility selected only these intervals."
+        ]
+      }
+    }
+  },
+  "goal": {
+    "G_possible_pressure": {
+      "claim": "Possible pressure objective; author intent unidentified.",
+      "provenance": "unknown"
+    }
+  },
+  "strategy": [
+    {
+      "id": "M_visible_pressure",
+      "when": "enemy_visible_near_wave",
+      "skill": "M_continue_pressure",
+      "for": [
+        "G_possible_pressure"
+      ]
+    }
+  ],
+  "skill": {
+    "M_continue_pressure": {
+      "operator": "forecast_visible_motif",
+      "output": "possible continued wave proximity",
+      "granularity": "motif; no command, target or timing prediction",
+      "probability": null,
+      "supporting_opportunities": 0
+    }
+  },
+  "execution": {
+    "mode": "descriptive_forecast_only",
+    "usable_as_counterfactual_proxy": false,
+    "status": "illustration; not fitted",
+    "reason": "No responsive executable or intervention validation.",
+    "heldout_metrics": null
+  },
+  "update": {
+    "revision": 0,
+    "parent": null,
+    "change": "Initial untested illustrative fixture.",
+    "needs_review": [],
+    "evidence": [],
+    "research_plan": {
+      "freeze_before_fit": [
+        "Exact opponent version and observer seat",
+        "Feature code and eligibility",
+        "Episode/trajectory-group splits",
+        "Population and last-action baselines",
+        "Metrics and rejection rule"
+      ],
+      "qualification": "Report novelty, missingness, censoring and support; do not infer a reactive proxy from accuracy."
+    }
+  }
+}
