@@ -85,11 +85,17 @@ for lab in "$REPO"/games/*/; do
 done
 
 # Upload this session with no fresh version-log row. Evidence of an upload
-# comes from the session transcript (upload-policy / build-upload commands);
-# a fresh row is any VERSION_LOG.md line carrying today's or yesterday's UTC
+# is a tool CALL in the transcript running `upload-policy <arg>`. Matching the
+# bare word anywhere fired on sessions that only printed `coworld --help` or
+# read the build-upload skill (webdip onboarding, 2026-10-10): tool results,
+# prose and `upload-policy --help` / `<image>` placeholders must not count.
+# Tool-call lines: Claude Code "tool_use"; Codex "function_call" and
+# "custom_tool_call" (their outputs end in "_output" and do not match).
+# A fresh row is any VERSION_LOG.md line carrying today's or yesterday's UTC
 # date (rows are "| vN | pv_… | YYYY-MM-DD HH:MM | …").
 NO_ROW=""
-if grep -q 'upload-policy\|upload_policy' "$TRANSCRIPT" 2>/dev/null; then
+if grep -E '"type": ?"(tool_use|function_call|custom_tool_call)"' "$TRANSCRIPT" 2>/dev/null \
+  | grep -qE 'upload[-_]policy[[:space:]]+[[:alnum:]$/.]'; then
   today="$(date -u +%Y-%m-%d)"
   yday="$(date -u -v-1d +%Y-%m-%d 2>/dev/null || date -u -d yesterday +%Y-%m-%d 2>/dev/null || true)"
   fresh="$(grep -l -e "$today" ${yday:+-e "$yday"} \
