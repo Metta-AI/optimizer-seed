@@ -293,7 +293,7 @@ Use these words to mean exactly this, everywhere — skills, records, reports:
 | `WORKING_CONTEXT.md` / `TENTATIVE_LESSONS.md` | Live state / session buffer |
 | `SEED.md` | Seed provenance and version |
 | `skills/` | The thirteen core skills (each: SKILL.md + optional scripts/) |
-| `tools/` | Hooks (`rotate_lessons.sh`, `lessons_stop_nudge.sh`) and `add_game.sh` |
+| `tools/` | Hooks (`rotate_lessons.sh`, `lessons_stop_nudge.sh`, `experiments_stop_nudge.sh`) and `add_game.sh` |
 | `harness/` | Per-runtime wiring for the hooks and skills |
 | `docs/` | getting-started, platform reference, policy development, growth paths, reports |
 | `games/` | Your labs (one per game) + `_template/` (the mixin contract) |
