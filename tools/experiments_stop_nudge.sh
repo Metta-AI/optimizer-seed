@@ -72,6 +72,7 @@ for lab in "$REPO"/games/*/; do
           NR==1 && /^---/ {infm=1; next}
           infm && /^---/ {exit}
           infm && /^status:[[:space:]]*(confirmed|refuted)/ {concluded=1}
+          infm && /^evals:[[:space:]]*\[[[:space:]]*[^][:space:]]/ {has=1; next}  # inline list: evals: [xreq_1]
           infm && /^evals:/ {seen=1; next}
           seen && /^[[:space:]]*-[[:space:]]*[^[:space:]]/ {has=1; seen=0}
           seen && /^[^[:space:]]/ {seen=0}
