@@ -169,8 +169,16 @@ def fetch_episode(c: httpx.Client, ep: dict, out: Path, skip: frozenset[str] = f
     print(f"  fetched {ereq} ({ep.get('status')})", flush=True)
 
 
-def fetch_pass(c: httpx.Client, xreq: str, args: argparse.Namespace, skip: frozenset[str]) -> bool:
-    """One poll of one batch: fetch what is terminal. Returns True when everything is fetched."""
+HEARTBEAT_POLLS = 10  # in --watch, print one "still waiting" line after this many unchanged polls
+
+
+def fetch_pass(c: httpx.Client, xreq: str, args: argparse.Namespace, skip: frozenset[str],
+               seen: dict[str, tuple[int, int]] | None = None) -> bool:
+    """One poll of one batch: fetch what is terminal. Returns True when everything is fetched.
+
+    `seen` (batch -> counts last printed) keeps a watch quiet: the status line is printed only
+    when a batch's counts changed, so fourteen batches of a slow game do not print fourteen
+    identical lines every poll."""
     out = Path(args.out) / xreq
     eps = episodes_for(c, xreq)
     terminal = [e for e in eps if e.get("status") in TERMINAL]
@@ -189,18 +197,31 @@ def fetch_pass(c: httpx.Client, xreq: str, args: argparse.Namespace, skip: froze
     with ThreadPoolExecutor(max_workers=args.workers) as pool:
         list(pool.map(fetch_one, pending))
     done_count = sum(1 for e in eps if (out / (e.get("id") or "?") / ".done").exists())
-    print(f"{time.strftime('%H:%M:%S')} {xreq}: {len(terminal)}/{len(eps)} terminal, "
-          f"{done_count} fetched -> {out}", flush=True)
+    counts = (len(terminal), done_count)
+    if seen is None or seen.get(xreq) != counts:
+        print(f"{time.strftime('%H:%M:%S')} {xreq}: {len(terminal)}/{len(eps)} terminal, "
+              f"{done_count} fetched -> {out}", flush=True)
+    if seen is not None:
+        seen[xreq] = counts
     return bool(eps) and done_count == len(eps)
 
 
 def run(c: httpx.Client, args: argparse.Namespace) -> None:
     skip = frozenset(args.skip)
     remaining = list(args.xreq)
+    seen: dict[str, tuple[int, int]] = {}
+    quiet_polls = 0
     while True:
-        remaining = [x for x in remaining if not fetch_pass(c, x, args, skip)]
+        before = dict(seen)
+        remaining = [x for x in remaining if not fetch_pass(c, x, args, skip, seen)]
         if not args.watch or not remaining:
             break
+        # A heartbeat when nothing changed for a while, so a long wait is not mistaken for a hang.
+        quiet_polls = 0 if seen != before else quiet_polls + 1
+        if quiet_polls and quiet_polls % HEARTBEAT_POLLS == 0:
+            fetched = sum(done for _, done in seen.values())
+            print(f"{time.strftime('%H:%M:%S')} still waiting: {len(remaining)} of {len(args.xreq)} batch(es) "
+                  f"unfinished, {fetched} episode(s) fetched so far", flush=True)
         time.sleep(args.interval)
 
 
