@@ -88,7 +88,7 @@ done
 # Upload this session with no fresh version-log row. Evidence of an upload
 # is a tool CALL in the transcript running `upload-policy <arg>`. Matching the
 # bare word anywhere fired on sessions that only printed `coworld --help` or
-# read the build-upload skill (webdip onboarding, 2026-10-10): tool results,
+# read the build-upload skill (seen in an onboarding session, 2026-10-10): tool results,
 # prose and `upload-policy --help` / `<image>` placeholders must not count.
 # Tool-call lines: Claude Code "tool_use"; Codex "function_call" and
 # "custom_tool_call" (their outputs end in "_output" and do not match).

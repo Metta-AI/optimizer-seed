@@ -52,7 +52,8 @@ def load_token() -> str:
     the CLI acted as the player: batches were created under the wrong identity
     and were then invisible to `coworld xp-request list --mine` and
     `coworld replay-open` (found 2026-10-10). So: the active player session
-    first, the user token otherwise. Set OPTIMIZER_AS_USER=1 to force the user
+    first; the user token only when no player is active (an expired player
+    session is an error, not a fallback). Set OPTIMIZER_AS_USER=1 to force the user
     token (for batches that were created as the user). The identity chosen is
     printed to stderr.
     """
@@ -75,12 +76,14 @@ def load_token() -> str:
                 print(f"[auth] acting as player {active}", file=sys.stderr)
                 return entry["token"]
             if active:
-                print(f"[auth] player session {active} is missing or expired; "
-                      f"run `coworld player use {active}`. Falling back to the user token.", file=sys.stderr)
+                # Do not fall back to the user token here: that is the wrong-identity bug again,
+                # only quieter.
+                sys.exit(f"[auth] player session {active} is missing or expired; run "
+                         f"`coworld player use {active}`, or set OPTIMIZER_AS_USER=1 to act as the main user.")
     tokens = data.get("tokens") or {}
     for server, tok in tokens.items():
         if "softmax.com" in server and tok:
-            print("[auth] acting as the main user (no active player session)", file=sys.stderr)
+            print("[auth] acting as the main user", file=sys.stderr)
             return tok
     sys.exit("No softmax.com token found — run `softmax login` first.")
 
