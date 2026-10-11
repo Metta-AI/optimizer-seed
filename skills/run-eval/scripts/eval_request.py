@@ -44,34 +44,45 @@ TERMINAL = {"completed", "failed", "cancelled", "error"}
 # ---------- auth ----------
 
 def load_token() -> str:
-    """Read the current softmax auth token.
+    """Read the softmax token for the identity the `coworld` CLI is acting as.
 
-    The auth library has renamed over time; try the import paths in order,
-    then fall back to the credentials file directly.
+    `coworld player use` stores a player session under `player_sessions` in
+    ~/.softmax/credentials.yaml; the plain login token under `tokens` is the
+    main USER. Reading only `tokens` made these scripts act as the user while
+    the CLI acted as the player: batches were created under the wrong identity
+    and were then invisible to `coworld xp-request list --mine` and
+    `coworld replay-open` (found 2026-10-10). So: the active player session
+    first, the user token otherwise. Set OPTIMIZER_AS_USER=1 to force the user
+    token (for batches that were created as the user). The identity chosen is
+    printed to stderr.
     """
-    try:
-        from softmax.auth import load_current_token  # type: ignore
-        return load_current_token(server="https://softmax.com")
-    except Exception:
-        pass
-    try:
-        from softmax.auth import load_current_cogames_token  # type: ignore
-        return load_current_cogames_token()
-    except Exception:
-        pass
+    import os
+    from datetime import datetime, timezone
+
     creds = Path.home() / ".softmax" / "credentials.yaml"
-    if creds.exists():
-        import yaml
-        data = yaml.safe_load(creds.read_text()) or {}
-        tokens = data.get("tokens") or {}
-        # keyed by API server URL; prefer the softmax.com entry, else any
-        for server, tok in tokens.items():
-            if "softmax.com" in server and tok:
-                return tok
-        for tok in tokens.values():
-            if tok:
-                return tok
-    sys.exit("No softmax credentials found — run `softmax login` first.")
+    if not creds.exists():
+        sys.exit("No softmax credentials found — run `softmax login` first.")
+    import yaml
+    data = yaml.safe_load(creds.read_text()) or {}
+    if not os.environ.get("OPTIMIZER_AS_USER"):
+        for server, session in (data.get("player_sessions") or {}).items():
+            if "softmax.com" not in server:
+                continue
+            active = (session or {}).get("active")
+            entry = ((session or {}).get("cache") or {}).get(active) or {}
+            expires = str(entry.get("expires_at") or "")
+            if entry.get("token") and expires > datetime.now(timezone.utc).isoformat():
+                print(f"[auth] acting as player {active}", file=sys.stderr)
+                return entry["token"]
+            if active:
+                print(f"[auth] player session {active} is missing or expired; "
+                      f"run `coworld player use {active}`. Falling back to the user token.", file=sys.stderr)
+    tokens = data.get("tokens") or {}
+    for server, tok in tokens.items():
+        if "softmax.com" in server and tok:
+            print("[auth] acting as the main user (no active player session)", file=sys.stderr)
+            return tok
+    sys.exit("No softmax.com token found — run `softmax login` first.")
 
 
 def client(server: str) -> httpx.Client:
