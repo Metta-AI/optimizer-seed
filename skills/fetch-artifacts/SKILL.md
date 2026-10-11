@@ -39,6 +39,8 @@ records. Anything durable extracted from them goes to its named home.
   (`--workers`, default 6), and exits when every episode of every batch is
   fetched. Launch it in the background right after `run-eval` creates the
   batch. Pass all the ids of a multi-batch design to one process.
+  While watching, a batch's status line is printed only when its counts change;
+  after ten unchanged polls one "still waiting" line shows the watch is alive.
 - **One-shot:** the same command without `--watch` — fetches whatever is
   terminal right now. Use for old batches or after an interrupted watch.
 - `--skip replay` (or `results`, `logs`) leaves an artifact type out when it
