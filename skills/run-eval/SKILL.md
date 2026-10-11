@@ -19,7 +19,7 @@ request shape, at the right size, launched with harvest already streaming.
 
 | Question | Shape |
 |---|---|
-| "How does vN do against the field?" | Field eval: our policy in one seat, the rest sampled from the division (`top_n`/`random`) |
+| "How does vN do against the field?" | Field eval: our policy in one seat, the rest sampled from the division (`top_n`/`random`) — or pinned to explicit versions when the lab's eval-design binding says sampling is unsafe (a small champion pool can seat you against yourself) |
 | "Did my change help?" (A/B) | Two matched arms: identical pinned rosters (`policy_ref` every seat), same window, one arm per version — **never** sampled seats in an A/B |
 | "How do we do in role X?" | Role-pinned probe: force the role assignment, pinned roster |
 | "Does the build even run?" | Crash-test: smallest batch the game allows, any roster, looking only at connect/play/exit |
@@ -55,8 +55,11 @@ has no floors yet, say so (gap) and treat everything as directional.
    **dry-run**: `eval_request.py create body.json --dry-run` validates
    against the live schema — a stray key 4xxs, so never skip this.
 4. **Launch and pace.** `create` without `--dry-run`. For multi-arm work,
-   drain one arm before firing the next (see `docs/platform.md` on pacing —
-   concurrent oversized batches have contaminated each other).
+   keep both arms in the same time window (`ab-compare`), sized so the
+   platform runs them cleanly: the lab's eval-design binding gives the batch
+   size and whether arms go out together or one after the other. Without a
+   binding, drain one arm before firing the next (see `docs/platform.md` on
+   pacing — concurrent oversized batches have contaminated each other).
 5. **Stream, don't wait.** Immediately start
    `fetch_artifacts.py XREQ --watch` in the background — artifacts land as
    episodes finish, so reading (loop step 3) starts before the batch drains.

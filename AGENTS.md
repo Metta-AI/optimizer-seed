@@ -89,7 +89,7 @@ campaign usually enters at 2.
 | 5 | **Hypothesize** | Turn the direction into a mechanism — *X happens because Y, causing Z* — pinned to a code location, expected effect pre-registered. Check `closed_levers.md` first. | `diagnose` → `experiment` |
 | 6 | **Change one thing** | Exactly one attributable change; instrumentation lands with it if needed. | policy source |
 | 7 | **Build + upload** | Build via the mixin's tooling; upload inert; **version log row before anything else**. | `build-upload` |
-| 8 | **Verify** | Matched, fresh, same-window comparison; verdict read against the pre-committed decision rule. | `ab-compare`, `experiment` |
+| 8 | **Verify** | Matched, fresh, same-window comparison on an instrument that passed a same-code check; verdict read against the pre-committed decision rule; a deployment check before promotion when the test setup is not the league's. | `ab-compare`, `experiment` |
 | 9 | **Record** | Close the experiment record with its verdict; dead levers to `closed_levers.md`; buffer session lessons. Loop to 2 (or 1 if the field may have moved). | records |
 | 10 | **Submit — the gate** | Only when demonstrably better, only with explicit human go-ahead. Decision record; then monitor qualification. | `submit` |
 

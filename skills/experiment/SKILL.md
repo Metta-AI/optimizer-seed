@@ -86,6 +86,15 @@ Into the record, before the run:
 Also design so a result can refute the *direction*, not just the presence —
 a mechanism can be real and backwards.
 
+- **The promotion gate, when the test setup is not the deployment setup.** If
+  the designed eval differs from how the policy will compete (both versions
+  in the same episode, a pinned role, a short variant), pre-register a second
+  check in the deployment setup with its own pass mark — see `ab-compare`,
+  "Check the instrument before you trust it". The decision rule decides the
+  verdict on the test; this gate decides whether the version may replace the
+  baseline. A verdict that meets its rule and fails its gate is recorded as
+  not promoted.
+
 ### 5. Run
 
 Set the record's status to `running` and execute the instrument: the
