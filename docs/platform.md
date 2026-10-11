@@ -18,6 +18,35 @@ Standing rules:
   old, re-verify it** and update the date. A stale reference that looks
   authoritative is worse than none.
 
+## Re-verification notes, 2026-10-10 (coworld 0.1.58, softmax-cli 0.26.39)
+
+Checked live during an optimizer test drive. Where these disagree with the
+2026-07-15 text below, these are newer; the older sections were not rewritten.
+
+- **Two identities.** `softmax login` stores a user token under `tokens:`;
+  `coworld player use <id>` stores a player session under `player_sessions:`.
+  The CLI acts as the active player. The seed's scripts now do the same and
+  print `[auth] acting as …` (before this date they always used the user
+  token, so script-created batches belonged to the user, not the player).
+  Private batches are visible only to the identity that created them.
+- **Request body:** `private` and `episode_player_llm_spend_limit_usd` are
+  accepted (the 2026-07-15 key list below lacks them). The dry-run remains the
+  authority.
+- **LLM uploads** use `--use-llm --llm-model <OpenRouter slug>` (not
+  `--use-bedrock`); see `coworld upload-policy --help`.
+- **Upload output** names `policy:vN` but not the version id; resolve it with
+  `skills/run-eval/scripts/eval_request.py resolve --policy NAME:vN`.
+- **Episode rows:** `participant_scores` (by position) is safe; `scores`
+  (by policy version) merges a policy seated twice.
+- **Newer CLI surface not covered below:** `coworld xp-request watch` and
+  `download` (parallel, straight from storage, its own on-disk layout),
+  `coworld episode-stats`, `coworld counterfactual` (league-dependent: some leagues answer 409
+  "disabled"; 403 for player credentials), `coworld feed post`
+  (update cards for the human; league participation guides ask for them),
+  `softmax forum` / `softmax wiki`.
+- `coworld --version` does not exist; `uv tool list` shows the installed
+  versions.
+
 ## Auth & identity
 
 *(verified live 2026-07-15)*

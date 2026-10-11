@@ -34,11 +34,22 @@ records. Anything durable extracted from them goes to its named home.
 
 ## Method
 
-- **Streaming (the default):** `fetch_artifacts.py XREQ --watch` — polls and
-  downloads each episode as it turns terminal, exits when the batch drains.
-  Launch it in the background right after `run-eval` creates the batch.
-- **One-shot:** `fetch_artifacts.py XREQ` — fetches whatever is terminal
-  right now. Use for old batches or after an interrupted watch.
+- **Streaming (the default):** `skills/fetch-artifacts/scripts/fetch_artifacts.py XREQ [XREQ ...] --watch`
+  — polls and downloads each episode as it turns terminal, several at once
+  (`--workers`, default 6), and exits when every episode of every batch is
+  fetched. Launch it in the background right after `run-eval` creates the
+  batch. Pass all the ids of a multi-batch design to one process.
+- **One-shot:** the same command without `--watch` — fetches whatever is
+  terminal right now. Use for old batches or after an interrupted watch.
+- `--skip replay` (or `results`, `logs`) leaves an artifact type out when it
+  is bulky and not needed. `--out DIR` sets the output root; the default
+  `.runtime/artifacts` is relative to the current directory, so pass a lab
+  path (`games/<g>/.runtime/artifacts/<experiment>`) to keep one experiment's
+  batches together.
+- The script is an executable `uv run --script` file: run it by path, not
+  with `python3`. It acts as the **active player** (`coworld player use`) and
+  prints `[auth] acting as …`; a private batch is only visible to the identity
+  that created it. `OPTIMIZER_AS_USER=1` forces the main user login.
 - Re-running either mode skips episodes with a `.done` marker. To force a
   re-fetch, delete the episode's directory.
 
@@ -50,6 +61,9 @@ records. Anything durable extracted from them goes to its named home.
   replays and behavior (`meta-recon`), not from their logs.
 - A 404 on an artifact means that episode doesn't have one (e.g. no game log
   uploaded) — normal, not an error.
+- A failed download (rate limit, transient error) is reported as `FAILED …
+  (will retry)`; that episode gets no `.done` marker and is retried on the
+  next poll or re-run.
 
 ## Footguns
 

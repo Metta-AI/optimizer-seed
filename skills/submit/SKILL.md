@@ -46,7 +46,7 @@ the go-ahead names this version and this league.
    Update the version's validation state to `submitted`.
 4. **Monitor qualification:**
    ```
-   scripts/lifecycle.py monitor --policy <policy>:vN [--league <id>]
+   skills/submit/scripts/lifecycle.py monitor --policy <policy>:vN --league <id> --keep-watching
    ```
    Background it; report transitions (placed → qualifying → competing /
    disqualified, champion flag) as they happen.
