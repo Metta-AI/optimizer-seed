@@ -80,7 +80,10 @@ remint_buffer() {
   tmp="$(mktemp)"
   awk '{ print } /^---[[:space:]]*$/ { exit }' "$1" > "$tmp"
   printf '\n*(empty)*\n' >> "$tmp"
-  mv "$tmp" "$1"
+  # Write through the existing file instead of moving the temp file over it:
+  # mktemp creates mode 0600, and `mv` would leave the buffer unreadable to others.
+  cat "$tmp" > "$1"
+  rm -f "$tmp"
 }
 
 rotate_one() {
