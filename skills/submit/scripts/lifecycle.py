@@ -19,7 +19,7 @@ Two footguns are designed in (both verified behaviors):
 
 Usage:
     lifecycle.py status  --policy NAME[:vN] [--league LEAGUE_ID]
-    lifecycle.py monitor --policy NAME[:vN] [--league LEAGUE_ID] [--interval 60]
+    lifecycle.py monitor --policy NAME[:vN] [--league LEAGUE_ID] [--interval 60] [--keep-watching]
 """
 
 from __future__ import annotations
@@ -34,6 +34,7 @@ import httpx
 
 DEFAULT_SERVER = "https://softmax.com/api/observatory"
 TERMINAL_STATUSES = {"competing", "disqualified", "retired", "rejected"}
+FINAL_STATUSES = {"disqualified", "retired", "rejected"}
 
 
 def load_token() -> str:
@@ -150,16 +151,27 @@ def cmd_status(c: httpx.Client, args: argparse.Namespace) -> None:
 def cmd_monitor(c: httpx.Client, args: argparse.Namespace) -> None:
     seen: dict[str, str] = {}
     while True:
-        ms = find_memberships(c, args.policy, args.league)
+        try:
+            ms = find_memberships(c, args.policy, args.league)
+        except httpx.HTTPError as error:
+            # A transient error must not end a background monitor.
+            print(f"{time.strftime('%H:%M:%S')} poll failed ({error!r}); retrying", flush=True)
+            time.sleep(args.interval)
+            continue
         rows = summarize(ms)
         for row in rows:
             key = row["membership"] or "?"
-            state = f"{row['status']}{' (champion)' if row.get('is_champion') else ''}"
+            state = (f"{row['status']}/{row.get('substatus')}"
+                     f"{' (champion)' if row.get('is_champion') else ''}")
             if seen.get(key) != state:
                 print(f"{time.strftime('%H:%M:%S')} {row['policy']} @ {row['league']}: "
                       f"{seen.get(key, '—')} -> {state}", flush=True)
                 seen[key] = state
-        if rows and all(r["status"] in TERMINAL_STATUSES for r in rows):
+        # "competing" is reached minutes after submitting, long before the entry's first
+        # league game, and the champion flag and substatus can still move afterwards. With
+        # --keep-watching the monitor only stops on a final status.
+        stop_at = FINAL_STATUSES if args.keep_watching else TERMINAL_STATUSES
+        if rows and all(r["status"] in stop_at for r in rows):
             print("All memberships terminal.")
             print(json.dumps(rows, indent=2, default=str))
             return
@@ -179,6 +191,9 @@ def main() -> None:
         p.add_argument("--league", help="league id filter")
         if name == "monitor":
             p.add_argument("--interval", type=int, default=60)
+            p.add_argument("--keep-watching", action="store_true",
+                           help="do not stop at 'competing'; keep reporting status, substatus and "
+                                "champion changes until the membership is disqualified or retired")
         p.set_defaults(fn=fn)
     args = ap.parse_args()
     with httpx.Client(base_url=args.server,

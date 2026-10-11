@@ -77,6 +77,37 @@ def load_token() -> str:
     sys.exit("No softmax.com token found — run `softmax login` first.")
 
 
+def seat_scores(e: dict) -> list[dict]:
+    """One {label, score} per seat, in position order.
+
+    `participant_scores` is by position. The older `scores` list is keyed by
+    policy-version id and collapses a policy seated twice, so it is only a
+    fallback.
+    """
+    by_pos = {p.get("position"): p.get("score") for p in (e.get("participant_scores") or [])}
+    by_pvid = {s.get("policy_version_id"): s.get("score")
+               for s in (e.get("scores") or []) if isinstance(s, dict)}
+    seats = []
+    for p in sorted(e.get("participants") or [], key=lambda p: p.get("position", 0)):
+        label = p.get("label") or p.get("policy_name") or "?"
+        score = by_pos.get(p.get("position"), by_pvid.get(p.get("policy_version_id")))
+        seats.append({"label": label, "score": score})
+    return seats
+
+
+def policy_means(eps: list[dict]) -> list[dict]:
+    """Mean platform score per policy label over completed episodes (seats, not games)."""
+    acc: dict[str, list[float]] = {}
+    for e in eps:
+        if e.get("status") != "completed":
+            continue
+        for seat in seat_scores(e):
+            if seat["score"] is not None:
+                acc.setdefault(seat["label"], []).append(seat["score"])
+    rows = [{"label": k, "n": len(v), "mean": round(sum(v) / len(v), 4)} for k, v in acc.items()]
+    return sorted(rows, key=lambda r: -r["mean"])
+
+
 class State:
     """Polled snapshot shared between the poller thread and the HTTP handler."""
 
@@ -84,7 +115,8 @@ class State:
         self.xreqs = xreqs
         self.server = server
         self.lock = threading.Lock()
-        self.data: dict[str, dict] = {x: {"episodes": [], "started": time.time()} for x in xreqs}
+        self.data: dict[str, dict] = {x: {"episodes": [], "started": time.time(), "done_at_start": None}
+                                      for x in xreqs}
 
     def poll_forever(self) -> None:
         client = httpx.Client(base_url=self.server,
@@ -99,6 +131,8 @@ class State:
                     eps = eps if isinstance(eps, list) else eps.get("episodes", [])
                     with self.lock:
                         self.data[xreq]["episodes"] = eps
+                        if self.data[xreq]["done_at_start"] is None:
+                            self.data[xreq]["done_at_start"] = sum(e.get("status") in TERMINAL for e in eps)
                         self.data[xreq]["polled"] = time.time()
                 except Exception as e:  # keep serving stale data on poll errors
                     with self.lock:
@@ -112,7 +146,9 @@ class State:
                 eps = d["episodes"]
                 done = [e for e in eps if e.get("status") in TERMINAL]
                 elapsed = max(time.time() - d["started"], 1)
-                rate = len(done) / (elapsed / 60)  # episodes per minute
+                # Rate counts only episodes that finished while this dashboard watched;
+                # a batch that was already done would otherwise show an absurd rate.
+                rate = (len(done) - (d["done_at_start"] or 0)) / (elapsed / 60)  # episodes per minute
                 remaining = len(eps) - len(done)
                 out[xreq] = {
                     "total": len(eps),
@@ -123,10 +159,10 @@ class State:
                     "episodes": [{
                         "id": e.get("id"),
                         "status": e.get("status"),
-                        "scores": e.get("scores") or "",
-                        "participants": [p.get("policy_name", "?") for p in (e.get("participants") or [])],
+                        "seats": seat_scores(e),
                         "error_type": e.get("error_type") or "",
                     } for e in eps],
+                    "by_policy": policy_means(eps),
                 }
             return out
 
@@ -152,6 +188,8 @@ td { border-bottom:1px solid #f0ebe1; padding:5px 8px; font-feature-settings:"tn
 .st-failed, .st-error { color:#b36e4e; font-weight:700; }
 .st-running, .st-pending, .st-dispatched { color:#1a3875; }
 .err { color:#b36e4e; font-size:0.72rem; }
+table.means { width:auto; min-width:340px; margin:4px 0 4px; }
+.note { font-size:0.66rem; color:#777; margin:0 0 12px; max-width:640px; }
 </style></head><body><div class="page">
 <h1>Eval dashboard</h1>
 <div class="sub">polls every __POLL__s &middot; read-only &middot; close this tab freely — the batch runs server-side</div>
@@ -168,10 +206,17 @@ async function refresh() {
     html += `<div class="stats"><b>${d.done}/${d.total}</b> terminal (${pct}%)`;
     if (d.rate_per_min) html += ` &middot; <b>${d.rate_per_min}</b> eps/min`;
     if (d.eta_min) html += ` &middot; ~<b>${d.eta_min}</b> min remaining`;
-    html += `</div><table><tr><th>episode</th><th>status</th><th>players</th><th>scores</th><th>error</th></tr>`;
+    html += `</div>`;
+    if (d.by_policy.length) {
+      html += `<table class="means"><tr><th>policy</th><th>seats</th><th>mean score</th></tr>`;
+      for (const p of d.by_policy) html += `<tr><td>${p.label}</td><td>${p.n}</td><td>${p.mean.toFixed(3)}</td></tr>`;
+      html += `</table><div class="note">Raw platform means over completed seats, not adjusted for which role or position each seat drew. Directional only; read the batch with the lab's analysis tools.</div>`;
+    }
+    html += `<table><tr><th>episode</th><th>status</th><th>seats (score)</th><th>error</th></tr>`;
     for (const e of d.episodes) {
-      html += `<tr><td>${(e.id||'').slice(0,26)}…</td><td class="st-${e.status}">${e.status}</td>`
-            + `<td>${e.participants.join(', ')}</td><td>${JSON.stringify(e.scores)}</td><td>${e.error_type}</td></tr>`;
+      const seats = e.seats.map(s => s.score == null ? s.label : `${s.label} <b>${s.score.toFixed(2)}</b>`).join(' &middot; ');
+      html += `<tr><td>${(e.id||'').slice(0,13)}…</td><td class="st-${e.status}">${e.status}</td>`
+            + `<td>${seats}</td><td>${e.error_type}</td></tr>`;
     }
     html += '</table>';
   }

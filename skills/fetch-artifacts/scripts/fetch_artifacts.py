@@ -41,6 +41,7 @@ import argparse
 import json
 import sys
 import time
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 import httpx
@@ -123,7 +124,7 @@ def ext_for(content_type: str) -> str:
     return ".bin"
 
 
-def fetch_episode(c: httpx.Client, ep: dict, out: Path) -> None:
+def fetch_episode(c: httpx.Client, ep: dict, out: Path, skip: frozenset[str] = frozenset()) -> None:
     ereq = ep.get("id") or ep.get("episode_request_id")
     epdir = out / ereq
     done = epdir / ".done"
@@ -136,6 +137,8 @@ def fetch_episode(c: httpx.Client, ep: dict, out: Path) -> None:
     # replay + results + game logs via the generic artifact route
     # (valid types verified live: replay, results, logs; 404 = absent, not a bad route)
     for artifact_type, fname in (("replay", "replay"), ("results", "results"), ("logs", "game.log")):
+        if artifact_type in skip:
+            continue
         url = f"/v2/episode-requests/{ereq}/artifacts/{artifact_type}"
         with c.stream("GET", url) as r:
             if r.status_code == 404:
@@ -163,27 +166,50 @@ def fetch_episode(c: httpx.Client, ep: dict, out: Path) -> None:
     print(f"  fetched {ereq} ({ep.get('status')})", flush=True)
 
 
+def fetch_pass(c: httpx.Client, xreq: str, args: argparse.Namespace, skip: frozenset[str]) -> bool:
+    """One poll of one batch: fetch what is terminal. Returns True when everything is fetched."""
+    out = Path(args.out) / xreq
+    eps = episodes_for(c, xreq)
+    terminal = [e for e in eps if e.get("status") in TERMINAL]
+    pending = [e for e in terminal if not (out / (e.get("id") or "?") / ".done").exists()]
+
+    def fetch_one(ep: dict) -> None:
+        # One failed episode (rate limit, transient 5xx) must not kill the watch or the
+        # other downloads; it has no .done marker, so the next poll or re-run retries it.
+        try:
+            fetch_episode(c, ep, out, skip)
+        except httpx.HTTPError as error:
+            print(f"  FAILED {ep.get('id')}: {error!r} (will retry)", flush=True)
+
+    # Episodes of one batch often finish together and replays can be large, so download
+    # several at once (httpx.Client is thread-safe).
+    with ThreadPoolExecutor(max_workers=args.workers) as pool:
+        list(pool.map(fetch_one, pending))
+    done_count = sum(1 for e in eps if (out / (e.get("id") or "?") / ".done").exists())
+    print(f"{time.strftime('%H:%M:%S')} {xreq}: {len(terminal)}/{len(eps)} terminal, "
+          f"{done_count} fetched -> {out}", flush=True)
+    return bool(eps) and done_count == len(eps)
+
+
 def run(c: httpx.Client, args: argparse.Namespace) -> None:
-    out = Path(args.out) / args.xreq
+    skip = frozenset(args.skip)
+    remaining = list(args.xreq)
     while True:
-        eps = episodes_for(c, args.xreq)
-        terminal = [e for e in eps if e.get("status") in TERMINAL]
-        for ep in terminal:
-            fetch_episode(c, ep, out)
-        done_count = sum(1 for e in eps if (out / (e.get("id") or "?") / ".done").exists())
-        print(f"{time.strftime('%H:%M:%S')} {args.xreq}: {len(terminal)}/{len(eps)} terminal, "
-              f"{done_count} fetched -> {out}", flush=True)
-        if not args.watch or (eps and len(terminal) == len(eps)):
+        remaining = [x for x in remaining if not fetch_pass(c, x, args, skip)]
+        if not args.watch or not remaining:
             break
         time.sleep(args.interval)
 
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("xreq", help="experience request id (xreq_…)")
+    ap.add_argument("xreq", nargs="+", help="one or more experience request ids (xreq_…)")
     ap.add_argument("--out", default=".runtime/artifacts", help="output root (default .runtime/artifacts)")
     ap.add_argument("--watch", action="store_true", help="stream: poll and fetch episodes as they finish")
     ap.add_argument("--interval", type=int, default=30)
+    ap.add_argument("--workers", type=int, default=6, help="episodes downloaded at once (default 6)")
+    ap.add_argument("--skip", action="append", default=[], choices=["replay", "results", "logs"],
+                    help="artifact type to leave out (repeatable); e.g. --skip replay when replays are bulky")
     ap.add_argument("--server", default=DEFAULT_SERVER)
     args = ap.parse_args()
 
