@@ -78,9 +78,19 @@ has no floors yet, say so (gap) and treat everything as directional.
 
 ## Scripts
 
-- `scripts/eval_request.py` — resolve / create (--dry-run) / get / episodes /
-  monitor. Verified live 2026-07-15.
-- `scripts/xp_dashboard.py` — live local dashboard for in-flight batches.
+Both are executable `uv run --script` files: run them by path (they fetch
+their own packages), not with `python3`. Both act as the **active player**
+(`coworld player use`) and print `[auth] acting as …` to stderr;
+`OPTIMIZER_AS_USER=1` forces the main user login instead.
+
+- `skills/run-eval/scripts/eval_request.py` — resolve / create (--dry-run) /
+  get / episodes / monitor. `create` prints the new batch id with a short
+  summary and saves the full response as `responses/<body name>` beside
+  the body; record the id in the experiment record straight
+  away. Verified live 2026-10-10.
+- `skills/run-eval/scripts/xp_dashboard.py XREQ [XREQ ...]` — live local
+  dashboard: progress, per-seat scores, and raw per-policy means (directional
+  only; judge with the lab's analysis tools).
 
 ## Handoffs
 
