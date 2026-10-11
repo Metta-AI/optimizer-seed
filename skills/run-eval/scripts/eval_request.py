@@ -169,7 +169,23 @@ def cmd_create(c: httpx.Client, args: argparse.Namespace) -> None:
                  f"Re-derive the body from {OPENAPI_PATH}; don't retry blind.")
     data = r.json()
     xreq = data.get("id") or data.get("experience_request_id")
-    print(json.dumps({"created": xreq, "response": data}, indent=2, default=str))
+    # The response embeds every episode row (thousands of lines for a large
+    # batch), which scrolls the id off the terminal. Save it and print only
+    # what the next step needs.
+    # In a `responses/` folder beside the body, so a shell glob over the bodies
+    # (`<slug>-r*.json`) never picks up a saved response.
+    saved = Path(args.body).parent / "responses" / Path(args.body).name
+    saved.parent.mkdir(exist_ok=True)
+    saved.write_text(json.dumps(data, indent=2, default=str))
+    print(json.dumps({
+        "created": xreq,
+        "status": data.get("status"),
+        "episode_count": data.get("episode_count"),
+        "coworld_version": data.get("coworld_version"),
+        "variant_id": data.get("variant_id"),
+        "cost_preview": data.get("cost_preview"),
+        "full_response": str(saved),
+    }, indent=2, default=str))
 
 
 def fetch_request(c: httpx.Client, xreq: str) -> dict:
