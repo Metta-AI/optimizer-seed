@@ -25,7 +25,7 @@ the test**. The one mandatory cost, every time, is the version log row.
 2. **Upload:**
    ```
    coworld upload-policy <image> --name <policy> [--run <argv>] \
-       [--secret-env KEY=…] [--use-bedrock [--bedrock-model …]] \
+       [--secret-env KEY=…] [--use-llm --llm-model <slug>] \
        [--tag purpose=<one-line-change-slug>]
    ```
    - `--run` is required for images containing multiple roles, and its

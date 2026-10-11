@@ -38,6 +38,36 @@ Same roster, same roles (natural roles unless a specific role is the
 question — pinning can mask the effect), same episode count, one variable:
 the subject version.
 
+## Check the instrument before you trust it
+
+A comparison is measuring equipment: the request design, the opponent set,
+the seat and role assignment, the analysis code. Two checks test the
+equipment instead of the policy. Both are cheap; skipping either has produced
+a confident wrong answer.
+
+- **Same-code check — before the first A/B of a campaign, and again after any
+  change to the request design, the opponent set or the analysis tools.**
+  Upload the baseline a second time under its own name and run the comparison
+  exactly as the real A/B will run, with identical code on both sides.
+  Pre-register "the true difference is zero; pass iff it reads as noise". A
+  fail means the design favours one side (a seat, a role, a neighbour): fix
+  the design and re-check before measuring anything. *Scar: a balanced-looking
+  design with a fixed seat order read a difference of z = 2.6 between two
+  uploads of identical code; one experiment had already been recorded on it.*
+- **Deployment check — whenever the test setup differs from how the policy
+  will actually compete.** Matched designs buy precision by changing the
+  conditions: both versions in one episode, a pinned role, a short variant.
+  Before the run, write down which of those differ from the league and the
+  pass mark for a second run with them put back (each version as the league
+  would seat it). A win that fails this check is "not promoted", recorded
+  with both numbers. *Scar: a change beat its baseline at z = 3.1 when both
+  sat in the same episodes and scored level with it when each played alone;
+  the gain had come from the other copy of the same policy, which a league
+  never seats.*
+
+The lab's ab binding says what these look like in its game (which positions
+can carry a bias, what "alone" means, the tools that run them).
+
 ## Method
 
 1. **Frame.** Baseline version, candidate version, and the **target axis** —

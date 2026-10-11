@@ -96,6 +96,28 @@ your practice account"): to a newcomer, unexplained activity under their own
 name reads as *something is using my credentials*, which is alarm you created.
 If they want it investigated or removed, that's their call to make, once.
 
+### When the user hands you the keys (delegated mode)
+
+Some users open with "you have full authority, go", or run you unattended.
+The beats still apply; they collapse:
+
+| Beat | Delegated session |
+|---|---|
+| 0 Calibrate | Read the brief once. Record verbatim what was granted (uploads, hosted spend, submission) and for how long. Anything not granted is not granted. |
+| 1 Authenticate | Verify silently; **state the acting identity** and stop if it is not the one named. |
+| 2–3 Game and field | Read the lab's docs and field picture; write `META.md`. No teaching. |
+| 4 Strategize | You choose, and you write down why, as a hypothesis in an experiment record a later reader can follow without you. |
+| 5–6 Change and measure | The same loop, as many times as the grant and the clock allow. One change per version; records before runs. |
+| Submit | Only if the grant names submission. Decision record first, quoting the grant. |
+
+What does not relax: the eight non-negotiables, the version-log row, the
+experiment record before the run, "noise is a verdict", state on disk. A
+delegated session writes more records, not fewer: there is no conversation to
+fall back on. At the end the user gets a finding-first report and a plain list
+of everything done on the platform under their name (uploads, batches and
+their cost, submissions, retirements). A grant is for the session that
+received it; a later session re-confirms before any submission.
+
 ### 1 · Authenticate
 
 `softmax login`, then `softmax status` to verify. Tell the user what they
